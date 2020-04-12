@@ -11,11 +11,8 @@ import com.example.kanban.entities.boards.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,22 +30,15 @@ public class MainController {
     @Autowired
     private MembershipRepository membershipRepository;
 
-    @PostMapping(path="/add_user") // Map ONLY POST Requests
-    public @ResponseBody String addNewUser (@RequestParam String name
-            , @RequestParam String email
-            , @RequestParam String surname
-            , @RequestParam String password
-            , @RequestParam String userName) {
+    @GetMapping(path = "/add_user")
+    public String addNewUserForm(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
+    }
 
-        System.out.println("HEJ");
-        User n = new User();
-        n.setName(name);
-        n.setEmail(email);
-        n.setSurname(surname);
-        // n.setRoles(roles);
-        n.setPassword(password);
-        n.setUserName(userName);
-        userRepository.save(n);
+    @PostMapping(path="/add_user") // Map ONLY POST Requests
+    public @ResponseBody String addNewUserSubmit (@ModelAttribute User user) {
+        userRepository.save(user);
         return "Saved";
     }
     @PostMapping(path="/add_task") // Map ONLY POST Requests
