@@ -37,13 +37,17 @@ public class MainController {
     public @ResponseBody String addNewUser (@RequestParam String name
             , @RequestParam String email
             , @RequestParam String surname
-            , @RequestParam String password) {
+            , @RequestParam String password
+            , @RequestParam String userName) {
 
+        System.out.println("HEJ");
         User n = new User();
         n.setName(name);
         n.setEmail(email);
         n.setSurname(surname);
+        // n.setRoles(roles);
         n.setPassword(password);
+        n.setUserName(userName);
         userRepository.save(n);
         return "Saved";
     }

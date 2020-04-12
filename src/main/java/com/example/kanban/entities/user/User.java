@@ -17,10 +17,10 @@ public class User {
     private String userName;
 
     // todo change type from String to UserType
-    /*@Enumerated(EnumType.STRING)
-    private UserType roles;*/
+    @Enumerated(EnumType.STRING)
+    private UserType roles;
 
-    private String roles;
+    // private String roles;
 
     @Column(unique = true, nullable = true)
     private String email;
@@ -57,10 +57,10 @@ public class User {
     }
 
     public String getRoles() {
-        return roles;
+        return roles.getAuthority();
     }
 
-    public void setRoles(String roles) {
+    public void setRoles(UserType roles) {
         this.roles = roles;
     }
 
