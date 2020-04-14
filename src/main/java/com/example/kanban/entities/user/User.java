@@ -14,7 +14,7 @@ public class User {
     private int id;
 
     @Column(unique = true, nullable = false)
-    private String userName;
+    private String nick;
 
     // todo change type from String to UserType
     /*@Enumerated(EnumType.STRING)
@@ -48,12 +48,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getNick() {
+        return nick;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setNick(String userName) {
+        this.nick = nick;
     }
 
     public String getRoles() {
