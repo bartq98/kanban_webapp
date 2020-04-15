@@ -1,16 +1,22 @@
 package com.example.kanban.entities.user;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.thymeleaf.util.StringUtils;
 
-public enum UserType implements GrantedAuthority {
+import java.util.Arrays;
+import java.util.List;
+
+public enum UserType implements GrantedAuthority{
     ADMIN("ROLE_ADMIN"), USER("ROLE_USER");
-    private String role;
 
-    UserType(String role){
-        this.role = role;
+    private List<String> roles;
+
+    UserType(String... roles){
+        this.roles = Arrays.asList(roles);
     }
+
     @Override
     public String getAuthority() {
-        return this.role;
+        return StringUtils.join(this.roles, ",");
     }
 }

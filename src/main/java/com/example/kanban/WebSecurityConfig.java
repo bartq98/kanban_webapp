@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    UserDetailsService userDetailsService;
+    UserDetailsServiceImpl userDetailsService;
 
     // Move configuration to new class
     @Override
@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/home").permitAll()
+                .antMatchers("/*").permitAll()
                 .anyRequest().authenticated() // Każda inna podstrona wymaga autoryzacji
                 .and()
                 .formLogin()
