@@ -54,15 +54,19 @@ public class MainController {
                                           RedirectAttributes attributes) {
         if (result.hasErrors()) {
             attributes.addFlashAttribute("register_fail", "Check if you have all fields");
-
-            // todo: Improve this, because for now after redirection template doesn't show any error message from fields
-            //attributes.addFlashAttribute("org.springframework.validation.BindingResult.User", result);
-            //attributes.addFlashAttribute("User", user);
             return "register";
         } else {
-            userRepository.save(user);
-            attributes.addFlashAttribute("register_success", "Your registration was successful");
-            return "redirect:/login";
+            if (userRepository.existsByUserName(user.getUserName())) {
+                attributes.addFlashAttribute("register_fail", "User with that name already exists");
+                return "redirect:/register";
+            } else if (userRepository.existsByEmail(user.getEmail())) {
+                attributes.addFlashAttribute("register_fail", "This email is already in use");
+                return "redirect:/register";
+            } else {
+                userRepository.save(user);
+                attributes.addFlashAttribute("register_success", "Your registration was successful");
+                return "redirect:/login";
+            }
         }
     }
     @PostMapping(path="/add_task") // Map ONLY POST Requests
