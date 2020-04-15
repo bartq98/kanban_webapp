@@ -17,31 +17,31 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @NotEmpty(message = "qqqq")
-    @Max(message = "zzzz", value = 30)
+    @NotEmpty()
+    @Size(max = 30)
     @Column(unique = true, nullable = false)
     private String userName;
 
     @Enumerated(EnumType.STRING)
     private UserType roles = UserType.USER;
 
-    @NotEmpty(message = "")
-    @Max(message = "", value = 30)
+    @NotEmpty()
+    @Size(max = 30)
     @Column(unique = true, nullable = true)
     private String email;
 
-    @NotEmpty(message = "")
-    @Max(message = "", value = 30)
+    @NotEmpty()
+    @Size(max = 30)
     @Column(nullable = false, length = 30)
     private String name;
 
-    @NotEmpty(message = "")
-    @Max(message = "", value = 30)
+    @NotEmpty()
+    @Size(max = 30)
     @Column(nullable = true, length = 30)
     private String surname;
 
-    @NotEmpty(message = "")
-    @Size(message = "", min = 8)
+    @NotEmpty()
+    @Size(min = 6)
     @Column(nullable = false)
     private String password;
 

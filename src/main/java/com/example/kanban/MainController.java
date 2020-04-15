@@ -49,9 +49,9 @@ public class MainController {
             attributes.addFlashAttribute("register_fail", "Check if you have all fields");
 
             // todo: Improve this, because for now after redirection template doesn't show any error message from fields
-            attributes.addFlashAttribute("org.springframework.validation.BindingResult.User", result);
-            attributes.addFlashAttribute("User", user);
-            return "redirect:/register";
+            //attributes.addFlashAttribute("org.springframework.validation.BindingResult.User", result);
+            //attributes.addFlashAttribute("User", user);
+            return "register";
         } else {
             userRepository.save(user);
             attributes.addFlashAttribute("register_success", "Your registration was successful");
