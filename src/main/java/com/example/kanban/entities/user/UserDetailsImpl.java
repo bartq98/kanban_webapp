@@ -11,18 +11,22 @@ import java.util.stream.Collectors;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private String userName;
-    private String password;
     private String email;
+    private String password;
     private List<GrantedAuthority> authorities;
 
     public UserDetailsImpl(User user) {
-        this.userName = user.getUserName();
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.authorities = Arrays.stream(user.getRoles().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+    }
+
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public String getUsername() { return userName; }
+    public String getUsername() { return ""; }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -56,14 +60,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
 }

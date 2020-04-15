@@ -4,6 +4,7 @@ import com.example.kanban.entities.user.UserRepository;
 import com.example.kanban.entities.user.UserDetailsImpl;
 import com.example.kanban.entities.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,10 +19,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUserName(userName);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByEmail(email);
 
-        user.orElseThrow(() -> new UsernameNotFoundException("Not found: " + userName));
+        user.orElseThrow(() -> new UsernameNotFoundException("Not found: " + email));
 
         return user.map(UserDetailsImpl::new).get();
     }
