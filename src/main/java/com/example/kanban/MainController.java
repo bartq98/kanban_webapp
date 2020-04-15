@@ -10,9 +10,13 @@ import com.example.kanban.entities.user.UserRepository;
 import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.boards.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,6 +44,9 @@ public class MainController {
     private BoardRepository boardRepository;
     @Autowired
     private MembershipRepository membershipRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @GetMapping(path = "/register")
     public String addNewUserForm(Model model) {
@@ -63,6 +70,7 @@ public class MainController {
                 attributes.addFlashAttribute("register_fail", "This email is already in use");
                 return "redirect:/register";
             } else {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
                 userRepository.save(user);
                 attributes.addFlashAttribute("register_success", "Your registration was successful");
                 return "redirect:/login";
