@@ -115,4 +115,9 @@ public class MainController {
     public @ResponseBody String Hello(@AuthenticationPrincipal UserDetailsImpl principal) {
         return userRepository.findByEmail(principal.getEmail()).get().getName();
     }
+    @ModelAttribute("userinfo")
+    @GetMapping(path="/info")
+    public @ResponseBody User Info(@AuthenticationPrincipal UserDetailsImpl principal){
+        return userRepository.findByEmail(principal.getEmail()).get();
+    }
 }
