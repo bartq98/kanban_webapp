@@ -5,24 +5,26 @@ import com.example.kanban.entities.membership.MembershipRepository;
 import com.example.kanban.entities.task.Task;
 import com.example.kanban.entities.task.TaskRepository;
 import com.example.kanban.entities.user.User;
+import com.example.kanban.entities.user.UserDetailsImpl;
 import com.example.kanban.entities.user.UserRepository;
 import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.boards.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(path="/demo")
+//@RequestMapping(path="/demo")
 public class MainController {
     @Autowired
     private UserRepository userRepository;
@@ -107,5 +109,10 @@ public class MainController {
             return "Saved";
         }
         else return "Error";
+    }
+    @ModelAttribute("text")
+    @GetMapping(path="/hello")
+    public @ResponseBody String Hello(@AuthenticationPrincipal UserDetailsImpl principal) {
+        return userRepository.findByEmail(principal.getEmail()).get().getName();
     }
 }
