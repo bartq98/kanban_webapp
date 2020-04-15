@@ -4,6 +4,10 @@ import com.example.kanban.entities.membership.Membership;
 import com.example.kanban.entities.task.Task;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
@@ -13,24 +17,31 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @NotEmpty(message = "qqqq")
+    @Max(message = "zzzz", value = 30)
     @Column(unique = true, nullable = false)
     private String userName;
 
-    // todo change type from String to UserType
     @Enumerated(EnumType.STRING)
-    private UserType roles;
+    private UserType roles = UserType.USER;
 
-    // private String roles;
-
+    @NotEmpty(message = "")
+    @Max(message = "", value = 30)
     @Column(unique = true, nullable = true)
     private String email;
 
+    @NotEmpty(message = "")
+    @Max(message = "", value = 30)
     @Column(nullable = false, length = 30)
     private String name;
 
+    @NotEmpty(message = "")
+    @Max(message = "", value = 30)
     @Column(nullable = true, length = 30)
     private String surname;
 
+    @NotEmpty(message = "")
+    @Size(message = "", min = 8)
     @Column(nullable = false)
     private String password;
 

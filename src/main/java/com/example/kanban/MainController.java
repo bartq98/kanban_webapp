@@ -12,14 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(path="/demo")
+@RequestMapping(path="/")
 public class MainController {
     @Autowired
     private UserRepository userRepository;
@@ -30,17 +34,32 @@ public class MainController {
     @Autowired
     private MembershipRepository membershipRepository;
 
-    @GetMapping(path = "/add_user")
+    @GetMapping(path = "/register")
     public String addNewUserForm(Model model) {
+
         model.addAttribute("user", new User());
         return "register";
     }
 
-    @PostMapping(path="/add_user") // Map ONLY POST Requests
-    public @ResponseBody String addNewUserSubmit (@ModelAttribute User user) {
-        userRepository.save(user);
-        return "Saved";
+    @PostMapping(path="/register") // Map ONLY POST Requests
+    public String addNewUserSubmit (@Valid @ModelAttribute User user,
+                                          BindingResult result,
+                                          RedirectAttributes attributes) {
+        if (result.hasErrors()) {
+            attributes.addFlashAttribute("register_fail", "Check if you have all fields");
+
+            // todo: Improve this, because for now after redirection template doesn't show any error message from fields
+            attributes.addFlashAttribute("org.springframework.validation.BindingResult.User", result);
+            attributes.addFlashAttribute("User", user);
+            return "redirect:/register";
+        } else {
+            userRepository.save(user);
+            attributes.addFlashAttribute("register_success", "Your registration was successful");
+            return "redirect:/login";
+        }
     }
+
+
     @PostMapping(path="/add_task") // Map ONLY POST Requests
     public @ResponseBody String addNewTask (
             @RequestParam Integer column_id
