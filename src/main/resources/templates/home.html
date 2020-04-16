@@ -2,10 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <title>Homepage</title>
+    <meta charset="UTF-8">
+    <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
+    <script src="/webjars/materializecss/1.0.0/css/materialize.min.css"></script>
+    <link rel="stylesheet" href="webjars/materializecss/1.0.0/css/materialize.min.css">
 </head>
 <body>
 <h1>Welcome!</h1>
-
+<div class="alert alert-success">
+    <a href="#" class="close" data-dismiss="alert"
+       aria-label="close">×</a>
+    <strong>Success!</strong> It is working as we expected.
+</div>
+<div class="card-panel teal lighten-2">This is a card panel with a teal lighten-2 class</div>
 <p>Click <a th:href="@{/hello}">here</a> to see a greeting.</p>
 <p>Click <a th:href="@{/info}">here</a> to see your profile.</p>
 </body>

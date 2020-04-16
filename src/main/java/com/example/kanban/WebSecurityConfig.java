@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/home", "/register").permitAll()
+                .antMatchers("/", "/home", "/register", "/webjars/**").permitAll()
                 .anyRequest().authenticated() // Każda inna podstrona wymaga autoryzacji
                 .and()
                 .formLogin()
