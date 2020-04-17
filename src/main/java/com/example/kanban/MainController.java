@@ -1,5 +1,8 @@
 package com.example.kanban;
 
+import com.example.kanban.entities.ConfirmationToken.ConfirmationToken;
+import com.example.kanban.entities.ConfirmationToken.ConfirmationTokenRepository;
+import com.example.kanban.entities.ConfirmationToken.EmailSenderService;
 import com.example.kanban.entities.membership.Membership;
 import com.example.kanban.entities.membership.MembershipRepository;
 import com.example.kanban.entities.task.Task;
@@ -12,6 +15,7 @@ import com.example.kanban.entities.boards.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +36,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping(path="/")
@@ -46,6 +53,10 @@ public class MainController {
     private MembershipRepository membershipRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ConfirmationTokenRepository confirmationTokenRepository;
+    @Autowired
+    private EmailSenderService emailSenderService;
 
 
     @GetMapping(path = "/register")
@@ -147,5 +158,65 @@ public class MainController {
     @GetMapping(path="/info")
     public @ResponseBody User Info(@AuthenticationPrincipal UserDetailsImpl principal){
         return userRepository.findByEmail(principal.getEmail()).get();
+    }
+    @RequestMapping(value="/forgot-password", method=RequestMethod.GET)
+    public ModelAndView displayResetPassword(ModelAndView modelAndView, User user) {
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("forgot-password");
+        return modelAndView;
+    }
+
+    // Receive the address and send an email
+    @RequestMapping(value="/forgot-password", method=RequestMethod.POST)
+    public String forgotUserPassword(ModelAndView modelAndView, User user,RedirectAttributes attributes) {
+        Optional<User> existingUserOptional = userRepository.findByEmail(user.getEmail());
+        if (existingUserOptional.isPresent()) {
+            User existingUser = existingUserOptional.get();
+            ConfirmationToken confirmationToken = new ConfirmationToken(existingUser);
+            confirmationTokenRepository.save(confirmationToken);
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setTo(existingUser.getEmail());
+            mailMessage.setSubject("Complete Password Reset!");
+            mailMessage.setFrom("szymon.barszcz99@gmail.com");
+            mailMessage.setText("To complete the password reset process, please click here: "
+                    + "http://localhost:8080/confirm-reset?token="+confirmationToken.getConfirmationToken());
+
+            emailSenderService.sendEmail(mailMessage);
+
+        } else {
+            attributes.addFlashAttribute("send_error", "Nie znaleziono adresu E-mail !");
+            return "redirect:/forgot-password";
+        }
+        attributes.addFlashAttribute("send_success", "Link do zmiany hasła został wysłany na adres mail");
+        return "redirect:/login";
+    }
+    @RequestMapping(value="/confirm-reset", method= {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView validateResetToken(ModelAndView modelAndView, @RequestParam("token")String confirmationToken) {
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+
+        if (token != null) {
+            User user = userRepository.findByEmail(token.getUser().getEmail()).get();
+            modelAndView.addObject("user", user);
+            modelAndView.addObject("email", user.getEmail());
+            modelAndView.setViewName("resetPassword");
+            confirmationTokenRepository.deleteByConfirmationToken(confirmationToken);
+        } else {
+            modelAndView.addObject("link_error","Niepoprawny link");
+            modelAndView.setViewName("login");
+        }
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/reset-password", method = RequestMethod.POST)
+    public ModelAndView resetUserPassword(ModelAndView modelAndView, User user) {
+        if (user.getEmail() != null) {
+
+            User tokenUser = userRepository.findByEmail(user.getEmail()).get();
+            tokenUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(tokenUser);
+            modelAndView.addObject("reset_success", "Zmiana hasła się powiodła");
+            modelAndView.setViewName("login");
+        }
+        return modelAndView;
     }
 }

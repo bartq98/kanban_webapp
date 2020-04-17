@@ -14,10 +14,21 @@
 <div th:if="${register_success}">
     <p th:text="${register_success}"></p>
 </div>
+<div th:if="${reset_success}">
+<p th:text="${reset_success}"></p>
+</div>
+<div th:if="${link_error}">
+    <p th:text="${link_error}"></p>
+</div>
+<div th:if="${send_success}">
+    <p th:text="${send_success}"></p>
+</div>
 <form th:action="@{/login}" method="post">
     <div><label> Email : <input type="email" name="email"/> </label></div>
     <div><label> Password: <input type="password" name="password"/> </label></div>
     <div><input type="submit" value="Sign In"/></div>
+
 </form>
+<a href="/forgot-password">Forgot Password?</a>
 </body>
 </html>
