@@ -12,8 +12,8 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/home").setViewName("layouts/home");  // todo: change to fragments/home/mainpage
         registry.addViewController("/").setViewName("layouts/home");
         registry.addViewController("/login").setViewName("fragments/forms/login");
-        registry.addViewController("/info").setViewName("layouts/profile");
-        registry.addViewController("/forgot-password").setViewName("forgot-password");
+        registry.addViewController("/info").setViewName("fragments/userprofile");
+        registry.addViewController("/forgot-password").setViewName("fragments/forms/forgot-password");
     }
 
     @Override

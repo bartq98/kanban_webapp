@@ -63,7 +63,7 @@ public class MainController {
     public String addNewUserForm(Model model) {
 
         model.addAttribute("user", new User());
-        return "register";
+        return "fragments/forms/register";
     }
 
     @PostMapping(path="/register") // Map ONLY POST Requests
@@ -72,7 +72,7 @@ public class MainController {
                                           RedirectAttributes attributes) {
         if (result.hasErrors()) {
             attributes.addFlashAttribute("register_fail", "Check if you have all fields");
-            return "register";
+            return "fragments/forms/register";
         } else {
             if (userRepository.existsByUserName(user.getUserName())) {
                 attributes.addFlashAttribute("register_fail", "User with that name already exists");
@@ -150,16 +150,22 @@ public class MainController {
         else return "Error";
     }
 
-    @ModelAttribute("userinfo")
+//    @ModelAttribute("userinfo")
+//    @GetMapping(path="/info")
+//    public @ResponseBody User Info(@AuthenticationPrincipal UserDetailsImpl principal){
+//        return userRepository.findByEmail(principal.getEmail()).get();
+//    }
+
     @GetMapping(path="/info")
-    public @ResponseBody User Info(@AuthenticationPrincipal UserDetailsImpl principal){
-        return userRepository.findByEmail(principal.getEmail()).get();
+    public String Info(@AuthenticationPrincipal UserDetailsImpl principal, Model model){
+        model.addAttribute("userinfo", userRepository.findByEmail(principal.getEmail()).get());
+        return "fragments/userprofile";
     }
 
     @RequestMapping(value="/forgot-password", method=RequestMethod.GET)
     public ModelAndView displayResetPassword(ModelAndView modelAndView, User user) {
         modelAndView.addObject("user", user);
-        modelAndView.setViewName("forgot-password");
+        modelAndView.setViewName("fragments/forms/forgot-password");
         return modelAndView;
     }
 
@@ -195,7 +201,7 @@ public class MainController {
             User user = userRepository.findByEmail(token.getUser().getEmail()).get();
             modelAndView.addObject("user", user);
             modelAndView.addObject("email", user.getEmail());
-            modelAndView.setViewName("resetPassword");
+            modelAndView.setViewName("fragments/forms/reset-password");
             confirmationTokenRepository.deleteByConfirmationToken(confirmationToken);
         } else {
             modelAndView.addObject("link_error","Niepoprawny link");

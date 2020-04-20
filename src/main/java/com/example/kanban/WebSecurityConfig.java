@@ -43,13 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-<<<<<<< Updated upstream
-
                 .antMatchers("/", "/home", "/register", "/webjars/**","/forgot-password","/reset-password","/confirm-reset").permitAll()
-
-=======
-                .antMatchers("/", "/home", "/register", "/webjars/**").permitAll()
->>>>>>> Stashed changes
                 .anyRequest().authenticated() // Każda inna podstrona wymaga autoryzacji
                 .and()
                 .formLogin()
