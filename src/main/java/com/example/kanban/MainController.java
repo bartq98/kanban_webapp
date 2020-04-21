@@ -150,12 +150,6 @@ public class MainController {
         else return "Error";
     }
 
-//    @ModelAttribute("userinfo")
-//    @GetMapping(path="/info")
-//    public @ResponseBody User Info(@AuthenticationPrincipal UserDetailsImpl principal){
-//        return userRepository.findByEmail(principal.getEmail()).get();
-//    }
-
     @GetMapping(path="/info")
     public String Info(@AuthenticationPrincipal UserDetailsImpl principal, Model model){
         model.addAttribute("userinfo", userRepository.findByEmail(principal.getEmail()).get());
@@ -222,11 +216,5 @@ public class MainController {
 
         modelAndView.setViewName("fragments/forms/login");
         return modelAndView;
-    }
-
-
-    @GetMapping(value = "/base")
-    public String baseAction(){
-        return "example";
     }
 }
