@@ -1,0 +1,23 @@
+<div layout:fragment="content" layout:decorate="~{base}">
+    <div th:if="${param.error}">
+        Invalid username and password.
+    </div>
+    <div th:if="${param.logout}">
+        You have been logged out.
+    </div>
+    <div th:if="${register_success}">
+        <p th:text="${register_success}"></p>
+    </div>
+    <div th:if="${reset_success}">
+        <p th:text="${reset_success}"></p>
+    </div>
+    <div th:if="${link_error}">
+        <p th:text="${link_error}"></p>
+    </div>
+    <div th:if="${send_success}">
+        <p th:text="${send_success}"></p>
+    </div>
+    <div layout:fragment="form">
+
+    </div>
+</div>

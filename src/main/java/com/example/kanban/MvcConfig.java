@@ -9,12 +9,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MvcConfig implements WebMvcConfigurer {
 
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/home").setViewName("home");
-        registry.addViewController("/").setViewName("home");
-        registry.addViewController("/hello").setViewName("hello");
-        registry.addViewController("/login").setViewName("login");
-        registry.addViewController("/info").setViewName("info");
-        registry.addViewController("/forgot-password").setViewName("forgot-password");
+        registry.addViewController("/home").setViewName("layouts/home");  // todo: change to fragments/home/mainpage
+        registry.addViewController("/").setViewName("layouts/home");
+        registry.addViewController("/login").setViewName("fragments/forms/login");
+        registry.addViewController("/info").setViewName("fragments/userprofile");
+        registry.addViewController("/forgot-password").setViewName("fragments/forms/forgot-password");
     }
 
     @Override
