@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
 
-                .antMatchers("/", "/home", "/register", "/webjars/**","/forgot-password","/reset-password","/confirm-reset").permitAll()
+                .antMatchers("/", "/home", "/register", "/webjars/**", "/forgot-password", "/reset-password", "/confirm-reset", "/error","/error/**").permitAll()
 
                 .anyRequest().authenticated() // Każda inna podstrona wymaga autoryzacji
                 .and()
@@ -55,6 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .permitAll();
+
     }
 
     @Bean
