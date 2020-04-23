@@ -45,14 +45,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/", "/home", "/register", "/webjars/**","/forgot-password","/reset-password","/confirm-reset").permitAll()
                 .anyRequest().authenticated() // Każda inna podstrona wymaga autoryzacji
+
                 .and()
                 .formLogin()
                 .loginPage("/login")
                 .usernameParameter("email")
                 .permitAll()
+
                 .and()
                 .logout()
-                .permitAll();
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+
+                .and()
+                .rememberMe().key("uniqueAndSecret");
     }
 
     @Bean
