@@ -49,10 +49,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 .usernameParameter("email")
+                .loginProcessingUrl("/login")
                 .permitAll()
                 .and()
                 .logout()
-                .permitAll();
+
+                .and()
+                .rememberMe() // todo: this doesn't work
+                .key("uniqueAndSecret")
+                .userDetailsService(userDetailsService)
+                ;
     }
 
     @Bean
