@@ -12,6 +12,7 @@ import com.example.kanban.entities.user.UserDetailsImpl;
 import com.example.kanban.entities.user.UserRepository;
 import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.boards.BoardRepository;
+import com.example.kanban.services.Slugify;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -61,6 +62,11 @@ public class MainController {
 
     @GetMapping(path = "/register")
     public String addNewUserForm(Model model) {
+        Slugify slug = new Slugify();
+        System.out.println(slug.parse("123-test   ASDAÓŁŻĆĘ       ńążśćłóę    hejo !!! #@#$_ ẞ ß"));
+
+        com.github.slugify.Slugify slug2 = new com.github.slugify.Slugify();
+        System.out.println(slug2.slugify("123-test     ASDAÓŁŻĆĘ     ńążśćłóę    hejo !!! #@#$_ ẞ ß"));
 
         model.addAttribute("user", new User());
         return "fragments/forms/register";
@@ -218,6 +224,7 @@ public class MainController {
         return modelAndView;
     }
 
+
     @RequestMapping(value = "/get-current-boards", method = RequestMethod.GET)
     public ModelAndView getLoggedUserBoard(@AuthenticationPrincipal UserDetailsImpl principal, ModelAndView modelAndView) {
         User tokenUser = userRepository.findByEmail(principal.getEmail()).get();
@@ -229,3 +236,6 @@ public class MainController {
         return modelAndView;
     }
 }
+
+
+
