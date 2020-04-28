@@ -1,0 +1,8 @@
+<div layout:fragment="boards-data" layout:decorate="~{layouts/board}">
+    <table th:each="board:${boards}" th:if="${boards}">
+        <tr>
+            <th>Nazwa</th>
+            <td th:text="${board.id}"></td>
+        </tr>
+    </table>
+</div>

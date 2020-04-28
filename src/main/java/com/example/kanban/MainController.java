@@ -174,7 +174,7 @@ public class MainController {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setTo(existingUser.getEmail());
             mailMessage.setSubject("Complete Password Reset!");
-            mailMessage.setFrom("szymon.barszcz99@gmail.com");
+            mailMessage.setFrom("test.kanban.996@gmail.com");
             mailMessage.setText("To complete the password reset process, please click here: "
                     + "http://localhost:8080/confirm-reset?token="+confirmationToken.getConfirmationToken());
 
@@ -215,6 +215,17 @@ public class MainController {
         }
 
         modelAndView.setViewName("fragments/forms/login");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/get-current-boards", method = RequestMethod.GET)
+    public ModelAndView getLoggedUserBoard(@AuthenticationPrincipal UserDetailsImpl principal, ModelAndView modelAndView) {
+        User tokenUser = userRepository.findByEmail(principal.getEmail()).get();
+        Optional<Board[]> boards = boardRepository.getAllBoards(tokenUser.getId());
+        if(boards.isPresent()) {
+            modelAndView.addObject("boards", boards.get());
+        }
+        modelAndView.setViewName("fragments/actions/board");
         return modelAndView;
     }
 }
