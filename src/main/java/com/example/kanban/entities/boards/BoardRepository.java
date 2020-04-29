@@ -1,9 +1,13 @@
 package com.example.kanban.entities.boards;
 
+import com.example.kanban.entities.membership.Membership;
+import com.example.kanban.entities.sections.Section;
+import com.example.kanban.entities.user.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends CrudRepository<Board, Integer> {

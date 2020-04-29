@@ -3,6 +3,8 @@ package com.example.kanban;
 import com.example.kanban.entities.ConfirmationToken.ConfirmationToken;
 import com.example.kanban.entities.ConfirmationToken.ConfirmationTokenRepository;
 import com.example.kanban.entities.ConfirmationToken.EmailSenderService;
+import com.example.kanban.entities.Exceptions.EmailNotFoundResetPassword;
+import com.example.kanban.entities.Exceptions.ObjectNotFoundException;
 import com.example.kanban.entities.membership.Membership;
 import com.example.kanban.entities.membership.MembershipRepository;
 import com.example.kanban.entities.task.Task;
@@ -28,7 +30,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping(path="/")
@@ -61,10 +65,10 @@ public class MainController {
         return "fragments/forms/register";
     }
 
-    @PostMapping(path="/register") // Map ONLY POST Requests
-    public String addNewUserSubmit (@Valid @ModelAttribute User user,
-                                          BindingResult result,
-                                          RedirectAttributes attributes) {
+    @PostMapping(path = "/register") // Map ONLY POST Requests
+    public String addNewUserSubmit(@Valid @ModelAttribute User user,
+                                   BindingResult result,
+                                   RedirectAttributes attributes) {
         if (result.hasErrors()) {
             attributes.addFlashAttribute("register_fail", "Check if you have all fields");
             return "fragments/forms/register";
@@ -102,8 +106,9 @@ public class MainController {
     }
 
 
-    @GetMapping(path="/all_users")
-    public @ResponseBody Iterable<User> getAllUsers() {
+    @GetMapping(path = "/all_users")
+    public @ResponseBody
+    Iterable<User> getAllUsers() {
         // This returns a JSON or XML with the users
         List<Membership> membershipList = userRepository.getAllMemberships(2);
         System.out.println("HEJ");
@@ -113,13 +118,16 @@ public class MainController {
         return userRepository.findAll();
     }
 
-    @GetMapping(path="/all_tasks")
-    public @ResponseBody Iterable<Task> getAllTasks() {
+    @GetMapping(path = "/all_tasks")
+    public @ResponseBody
+    Iterable<Task> getAllTasks() {
         // This returns a JSON or XML with the users
         return taskRepository.findAll();
     }
-    @PostMapping(path="/add_board") // Map ONLY POST Requests
-    public @ResponseBody String addNewBoard (@RequestParam String name
+
+    @PostMapping(path = "/add_board") // Map ONLY POST Requests
+    public @ResponseBody
+    String addNewBoard(@RequestParam String name
             , @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
             , @RequestParam String slug) {
         Board n = new Board();
@@ -129,20 +137,21 @@ public class MainController {
         boardRepository.save(n);
         return "Saved";
     }
-    @PostMapping(path="/add_membership") // Map ONLY POST Requests
-    public @ResponseBody String addNewMembership (@RequestParam Integer uid
+
+    @PostMapping(path = "/add_membership") // Map ONLY POST Requests
+    public @ResponseBody
+    String addNewMembership(@RequestParam Integer uid
             , @RequestParam Integer boardId) {
         Membership n = new Membership();
 
-        Optional<User> users=userRepository.findById(uid);
-        Optional<Board> board=boardRepository.findById(boardId);
-        if(users.isPresent() && board.isPresent()){
+        Optional<User> users = userRepository.findById(uid);
+        Optional<Board> board = boardRepository.findById(boardId);
+        if (users.isPresent() && board.isPresent()) {
             n.setUserId(users.get());
             n.setBoardId(board.get());
             membershipRepository.save(n);
             return "Saved";
-        }
-        else return "Error";
+        } else return "Error";
     }
 
     @GetMapping(path="/info")
@@ -159,8 +168,8 @@ public class MainController {
     }
 
     // Receive the address and send an email
-    @RequestMapping(value="/forgot-password", method=RequestMethod.POST)
-    public String forgotUserPassword(ModelAndView modelAndView, User user,RedirectAttributes attributes) {
+    @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
+    public String forgotUserPassword(ModelAndView modelAndView, User user, RedirectAttributes attributes) throws EmailNotFoundResetPassword {
         Optional<User> existingUserOptional = userRepository.findByEmail(user.getEmail());
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
@@ -171,19 +180,20 @@ public class MainController {
             mailMessage.setSubject("Complete Password Reset!");
             mailMessage.setFrom("test.kanban.996@gmail.com");
             mailMessage.setText("To complete the password reset process, please click here: "
-                    + "http://localhost:8080/confirm-reset?token="+confirmationToken.getConfirmationToken());
+                    + "http://localhost:8080/confirm-reset?token=" + confirmationToken.getConfirmationToken());
 
             emailSenderService.sendEmail(mailMessage);
 
         } else {
-            attributes.addFlashAttribute("send_error", "Nie znaleziono adresu E-mail !");
-            return "redirect:/forgot-password";
+
+            throw new EmailNotFoundResetPassword("Nie znaleziono podanego adresu E-mail");
         }
         attributes.addFlashAttribute("send_success", "Link do zmiany hasła został wysłany na adres mail");
         return "redirect:/login";
     }
-    @RequestMapping(value="/confirm-reset", method= {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView validateResetToken(ModelAndView modelAndView, @RequestParam("token")String confirmationToken) {
+
+    @RequestMapping(value = "/confirm-reset", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView validateResetToken(ModelAndView modelAndView, @RequestParam("token") String confirmationToken) throws ObjectNotFoundException {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
 
         if (token != null) {
@@ -195,6 +205,7 @@ public class MainController {
         } else {
             modelAndView.addObject("link_error","Niepoprawny link");
             modelAndView.setViewName("fragments/forms/login");
+            throw new ObjectNotFoundException("Token error");
         }
         return modelAndView;
     }
@@ -206,7 +217,10 @@ public class MainController {
             User tokenUser = userRepository.findByEmail(user.getEmail()).get();
             tokenUser.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(tokenUser);
+
+            confirmationTokenRepository.deleteByUser(tokenUser);
             modelAndView.addObject("reset_success", "Zmiana hasła się powiodła");
+            modelAndView.setViewName("fragments/forms/login");
         }
 
         modelAndView.setViewName("fragments/forms/login");
