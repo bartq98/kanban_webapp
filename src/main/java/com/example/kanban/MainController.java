@@ -30,7 +30,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping(path="/")
@@ -85,10 +87,8 @@ public class MainController {
             }
         }
     }
-
-    @PostMapping(path = "/add_task") // Map ONLY POST Requests
-    public @ResponseBody
-    String addNewTask(
+    @PostMapping(path="/add_task") // Map ONLY POST Requests
+    public @ResponseBody String addNewTask (
             @RequestParam Integer column_id
             , @RequestParam Integer executive_id
             , @RequestParam String title
@@ -239,4 +239,19 @@ public class MainController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "board/{id}")
+    public ModelAndView getBoardById(@PathVariable("id") int id, ModelAndView modelAndView) {
+        Optional<Board> board = boardRepository.findById(id);
+        if(board.isPresent()) {
+            modelAndView.addObject("board", board.get());
+        }
+        else {
+            // NIE MA BOARDA O TAKIM ID - OBSŁUGA BŁĘDU
+        }
+        modelAndView.setViewName("fragments/actions/board-by-id");
+        return modelAndView;
+    }
 }
+
+
+
