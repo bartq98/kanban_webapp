@@ -240,13 +240,13 @@ public class MainController {
     }
 
     @RequestMapping(value = "board/{id}")
-    public ModelAndView getBoardById(@PathVariable("id") int id, ModelAndView modelAndView) {
+    public ModelAndView getBoardById(@PathVariable("id") int id, ModelAndView modelAndView) throws ObjectNotFoundException {
         Optional<Board> board = boardRepository.findById(id);
         if(board.isPresent()) {
             modelAndView.addObject("board", board.get());
         }
         else {
-            // NIE MA BOARDA O TAKIM ID - OBSŁUGA BŁĘDU
+            throw new ObjectNotFoundException("Board with the given id does not exist");
         }
         modelAndView.setViewName("fragments/actions/board-by-id");
         return modelAndView;
