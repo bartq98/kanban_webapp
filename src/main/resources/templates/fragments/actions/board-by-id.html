@@ -1,0 +1,10 @@
+<div layout:fragment="boards-data" layout:decorate="~{layouts/board}">
+    <table>
+        <tr>
+            <td th:text="${board.id}"></td>
+            <td th:text="${board.created_at}"></td>
+            <td th:text="${board.name}"></td>
+            <td th:text="${board.slug}"></td>
+        </tr>
+    </table>
+</div>

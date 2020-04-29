@@ -235,6 +235,19 @@ public class MainController {
         modelAndView.setViewName("fragments/actions/board");
         return modelAndView;
     }
+
+    @RequestMapping(value = "board/{id}")
+    public ModelAndView getBoardById(@PathVariable("id") int id, ModelAndView modelAndView) {
+        Optional<Board> board = boardRepository.findById(id);
+        if(board.isPresent()) {
+            modelAndView.addObject("board", board.get());
+        }
+        else {
+            // NIE MA BOARDA O TAKIM ID - OBSŁUGA BŁĘDU
+        }
+        modelAndView.setViewName("fragments/actions/board-by-id");
+        return modelAndView;
+    }
 }
 
 
