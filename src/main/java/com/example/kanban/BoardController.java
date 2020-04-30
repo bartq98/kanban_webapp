@@ -1,5 +1,6 @@
 package com.example.kanban;
 
+import com.example.kanban.entities.Exceptions.JSONException;
 import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.boards.BoardRepository;
 import com.example.kanban.entities.membership.MembershipRepository;
@@ -35,7 +36,7 @@ public class BoardController {
 
     @ResponseBody
     @RequestMapping(value = "/{BID}/tasks", method = RequestMethod.GET)
-    public Optional<Task[]> TasksBoard(@PathVariable int BID,ModelAndView modelAndView,@AuthenticationPrincipal UserDetailsImpl principal){
+    public Optional<Task[]> TasksBoard(@PathVariable int BID,ModelAndView modelAndView,@AuthenticationPrincipal UserDetailsImpl principal) throws JSONException {
         Optional<Board> boardOptional=boardRepository.findById(BID);
         Optional<User> userOptional = userRepository.findByEmail(principal.getEmail());
         if(boardOptional.isPresent() && userOptional.isPresent()){
@@ -46,31 +47,29 @@ public class BoardController {
                 if(tasks.isPresent()){
                     return tasks;
                 }
+                else{
+                    throw new JSONException("You have 0 tasks");
+                }
             }
-            else{
-                //WYRZUCANIE WYJATKU
-                //NA RAZIE NULL
-                return null;
+            else {
+                throw new JSONException("You don't have permissions for this board");
             }
-            return null;
         }
         else{
-            //modelAndView.addObject("MembershipError","Wrong User or Board");
-            return null;
+           throw new JSONException("Wrong user or board");
         }
-        //modelAndView.setViewName("fragments/actions/BoardTasks");
-        //return modelAndView;
+
     }
     @ResponseBody
     @RequestMapping(value = "/{BID}/sections_from_board", method = RequestMethod.GET)
-    public Optional<Section[]> SectionsBoard(@PathVariable int BID){
+    public Optional<Section[]> SectionsBoard(@PathVariable int BID) throws JSONException {
         Optional<Section[]> sections=sectionRepository.getSectionsFromBoard(BID);
         if(sections.isPresent()) {
             return sections;
         }
         else {
-            //WYJĄTEK
-            return null;
+
+            throw new JSONException("Section not found");
         }
     }
 
