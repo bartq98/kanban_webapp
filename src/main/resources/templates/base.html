@@ -6,10 +6,15 @@
 <head>
     <title>Homepage</title>
     <meta charset="UTF-8">
-    <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
-    <script src="/webjars/materializecss/1.0.0/js/materialize.min.js"></script>
-    <link rel="stylesheet" href="webjars/materializecss/1.0.0/css/materialize.min.css">
+    <script th:src="@{/webjars/jquery/3.1.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/materializecss/1.0.0/js/materialize.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/materializecss/1.0.0/css/materialize.min.css}">
     <script layout:fragment="scripts"></script>
+    <link rel="stylesheet" th:href="@{/webjars/jqwidgets/6.0.4/styles/jqx.base.css}"/>
+    <script type="text/javascript" th:src="@{/webjars/jqwidgets/6.0.4/jqxcore.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/jqwidgets/6.0.4/jqxsortable.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/jqwidgets/6.0.4/jqxkanban.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/jqwidgets/6.0.4/jqxdata.js}"></script>
 </head>
 <body>
     <div layout:fragment="content">

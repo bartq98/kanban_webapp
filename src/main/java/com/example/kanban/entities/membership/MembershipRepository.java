@@ -13,7 +13,7 @@ public interface MembershipRepository extends CrudRepository<Membership, Integer
     Optional<Membership> findById(Integer id);
     List<Membership> findByUser(Integer id);
 
-    @Query(value = "SELECT * FROM membership WHERE board_id = ?1 AND user_id = ?2", nativeQuery = true)
+    @Query(value = "SELECT * FROM Membership WHERE board_id = ?1 AND user_id = ?2", nativeQuery = true)
     Optional<Membership> getMembershipsByBoardIdAndUserId(Integer boardId, Integer userId);
 
     boolean existsByUserAndBoard(User user, Board board);
