@@ -1,4 +1,4 @@
-package com.example.kanban.entities.Exceptions;
+package com.example.kanban.exceptions;
 
 public class BoardNotFoundException extends Exception{
     public BoardNotFoundException(String errorMessage){

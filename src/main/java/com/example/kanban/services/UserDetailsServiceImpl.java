@@ -1,4 +1,4 @@
-package com.example.kanban;
+package com.example.kanban.services;
 
 import com.example.kanban.entities.user.UserRepository;
 import com.example.kanban.entities.user.UserDetailsImpl;
