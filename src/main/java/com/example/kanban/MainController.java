@@ -252,7 +252,7 @@ public class MainController {
         return modelAndView;
     }
 
-    @GetMapping(path = "/kanban-test")
+    @GetMapping(path = "/board/kanban-test")
     public String kanbanTest(){
         return "layouts/board_tasks";
     }
