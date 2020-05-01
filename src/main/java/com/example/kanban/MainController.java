@@ -3,8 +3,10 @@ package com.example.kanban;
 import com.example.kanban.entities.ConfirmationToken.ConfirmationToken;
 import com.example.kanban.entities.ConfirmationToken.ConfirmationTokenRepository;
 import com.example.kanban.entities.ConfirmationToken.EmailSenderService;
+import com.example.kanban.entities.Exceptions.BoardNotFoundException;
 import com.example.kanban.entities.Exceptions.EmailNotFoundResetPassword;
 import com.example.kanban.entities.Exceptions.ObjectNotFoundException;
+import com.example.kanban.entities.Exceptions.PermissionDeniedException;
 import com.example.kanban.entities.membership.Membership;
 import com.example.kanban.entities.membership.MembershipRepository;
 import com.example.kanban.entities.task.Task;
@@ -240,13 +242,25 @@ public class MainController {
     }
 
     @RequestMapping(value = "board/{id}")
-    public ModelAndView getBoardById(@PathVariable("id") int id, ModelAndView modelAndView) throws ObjectNotFoundException {
-        Optional<Board> board = boardRepository.findById(id);
+    public ModelAndView getBoardById(@PathVariable("id") int boardId,
+                                     @AuthenticationPrincipal UserDetailsImpl principal,
+                                     ModelAndView modelAndView) throws BoardNotFoundException, PermissionDeniedException {
+
+        User tokenUser = userRepository.findByEmail(principal.getEmail()).get();
+        Optional<Board> board = boardRepository.findById(boardId);
+        Optional<Membership> membership =
+                membershipRepository.getMembershipsByBoardIdAndUserId(boardId, tokenUser.getId());
+
         if(board.isPresent()) {
-            modelAndView.addObject("board", board.get());
+            if(membership.isPresent()){
+                modelAndView.addObject("board", board.get());
+            }
+            else {
+                throw new PermissionDeniedException("You have no permission to see this board");
+            }
         }
         else {
-            throw new ObjectNotFoundException("Board with the given id does not exist");
+            throw new BoardNotFoundException("Board with the given id does not exist");
         }
         modelAndView.setViewName("fragments/actions/board-by-id");
         return modelAndView;

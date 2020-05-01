@@ -1,9 +1,6 @@
 package com.example.kanban;
 
-import com.example.kanban.entities.Exceptions.EmailNotFoundResetPassword;
-import com.example.kanban.entities.Exceptions.JSONException;
-import com.example.kanban.entities.Exceptions.JSONerror;
-import com.example.kanban.entities.Exceptions.ObjectNotFoundException;
+import com.example.kanban.entities.Exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -19,13 +16,16 @@ import org.springframework.web.servlet.view.RedirectView;
 public class GlobalExceptionHandling {
 
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = ObjectNotFoundException.class)
+    @ExceptionHandler({ObjectNotFoundException.class,
+            BoardNotFoundException.class,
+            PermissionDeniedException.class})
     public ModelAndView ObjectError(Exception ex){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("error");
         modelAndView.addObject("errormessage",ex.getMessage());
         return modelAndView;
     }
+
     @ResponseBody
     @ExceptionHandler(value = JSONException.class)
     public JSONerror ExceptionsInJSON(Exception ex){
