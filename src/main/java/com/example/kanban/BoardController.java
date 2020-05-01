@@ -10,7 +10,6 @@ import com.example.kanban.entities.task.TaskRepository;
 import com.example.kanban.entities.user.User;
 import com.example.kanban.entities.user.UserDetailsImpl;
 import com.example.kanban.entities.user.UserRepository;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -52,9 +51,11 @@ public class BoardController {
                 //NA RAZIE NULL
                 return null;
             }
+
             return null;
         }
         else{
+
             //modelAndView.addObject("MembershipError","Wrong User or Board");
             return null;
         }

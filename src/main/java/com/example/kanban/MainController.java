@@ -251,6 +251,11 @@ public class MainController {
         modelAndView.setViewName("fragments/actions/board-by-id");
         return modelAndView;
     }
+
+    @GetMapping(path = "/kanban-test")
+    public String kanbanTest(){
+        return "layouts/board_tasks";
+    }
 }
 
 

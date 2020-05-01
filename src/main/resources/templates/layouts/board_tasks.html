@@ -1,0 +1,78 @@
+<div layout:fragment="content" layout:decorate="~{base}">
+    <div id='kanban'>
+    </div>
+
+    <script type="text/javascript">
+
+        var tasksData, sectionData;
+
+        $.when(
+            $.getJSON("/get-current-boards/5/tasks", function (data) {
+                tasksData = data;
+            }),
+            $.getJSON("/get-current-boards/5/sections_from_board", function (data) {
+                sectionData = data;
+                console.debug(sectionData);
+                sectionData = sectionData.map((s) => {
+                    return {
+                        dataField: s.id,
+                        text: s.name
+                    }
+                });
+                console.debug(sectionData);
+
+            })
+            /* For debug
+            .done(function() {
+                console.log( "second success" );
+             })
+            .fail(function() {
+                console.log( "error" );
+            })
+            .always(function() {
+                console.log( "complete" );
+            });
+             */
+        ).then(function () {
+                let fields = [
+                    { name: "id", type: "string" },
+                    { name: "status", map: "column_id", type: "int" },
+                    { name: "text", map: "title", type: "string" },
+                    { name: "content", map: "description", type: "string" }
+                ];
+                let source =
+                    {
+                        localData: tasksData,
+                        datatype: 'array',
+                        dataFields: fields
+                    };
+                let dataAdapter = new $.jqx.dataAdapter(source);
+
+                console.debug(dataAdapter);
+
+                $('#kanban').jqxKanban({
+                    source: dataAdapter,
+                    columns: sectionData,
+                    template: "<div class='jqx-kanban-item' id=''>"
+                        + "<div class='jqx-kanban-item-text'></div>"
+                        + "<div class='jqx-kanban-item-content'></div>"
+                        + "</div>"
+                });
+
+                $('#kanban').on('itemMoved', function (event) {
+                    let args = event.args;
+                    let itemId = args.itemId;
+                    let oldParentId = args.oldParentId;
+                    let newParentId = args.newParentId;
+                    let itemData = args.itemData;
+                    let oldColumn = args.oldColumn;
+                    let newColumn = args.newColumn;
+                    console.debug(event);
+                });
+            });
+
+        $(document).ready(function () {
+
+        });
+    </script>
+</div>
