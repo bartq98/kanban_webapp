@@ -22,11 +22,33 @@ public class MembershipKey implements Serializable {
         if (obj == this){
             return true;
         }
-        return true;
+        if (obj == null || this.getClass() != obj.getClass()){
+            return false;
+        }
+        MembershipKey mk = (MembershipKey) obj;
+        return (mk.user.getId().equals(this.user.getId())) || (mk.board.getId().equals(this.board.getId()));
     }
 
     @Override
     public int hashCode() {
         return super.hashCode();
     }
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
 }
