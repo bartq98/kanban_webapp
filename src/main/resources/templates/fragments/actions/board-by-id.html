@@ -19,10 +19,10 @@
             var tasksData, sectionData;
 
             $.when(
-                $.getJSON("/get-current-boards/" + BID +"/tasks", function (data) {
+                $.getJSON("/board/" + BID +"/tasks", function (data) {
                     tasksData = data;
                 }),
-                $.getJSON("/get-current-boards/" + BID + "/sections_from_board", function (data) {
+                $.getJSON("/board/" + BID + "/sections_from_board", function (data) {
                     sectionData = data;
                     console.debug(sectionData);
                     sectionData = sectionData.map((s) => {
@@ -81,6 +81,9 @@
                     let newColumn = args.newColumn;
                     console.debug(event);
                 });
+                // $('#kanban').find('*').each(function() {
+                //     $(this).unbind();
+                // });
             });
         });
 

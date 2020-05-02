@@ -3,6 +3,7 @@ package com.example.kanban;
 
 import com.example.kanban.entities.user.User;
 import com.example.kanban.entities.user.UserRepository;
+import com.example.kanban.services.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
