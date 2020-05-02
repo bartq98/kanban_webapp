@@ -1,5 +1,5 @@
 package com.example.kanban.entities.membership;
-
+import static java.lang.System.*;
 import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.user.User;
 
@@ -27,6 +27,9 @@ public class MembershipKey implements Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        final int prime = 17;
+        int result = (int) prime * board.hashCode() * user.hashCode();
+        System.out.println(result);
+        return result;
     }
 }
