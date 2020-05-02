@@ -3,6 +3,7 @@
         <tr>
             <th>Nazwa</th>
             <td th:text="${board.name}"></td>
+            <a th:href="@{'~/board/' + ${board.id}}" th:text="${board.name}"></a>
         </tr>
     </table>
 </div>
