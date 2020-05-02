@@ -1,5 +1,7 @@
 package com.example.kanban.controllers;
 
+import com.example.kanban.entities.membership.Membership;
+import com.example.kanban.exceptions.BoardNotFoundException;
 import com.example.kanban.exceptions.JSONException;
 import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.boards.BoardRepository;
@@ -11,6 +13,7 @@ import com.example.kanban.entities.task.TaskRepository;
 import com.example.kanban.entities.user.User;
 import com.example.kanban.entities.user.UserDetailsImpl;
 import com.example.kanban.entities.user.UserRepository;
+import com.example.kanban.exceptions.PermissionDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(path="/get-current-boards")
+@RequestMapping(path="/board")
 public class BoardController {
     @Autowired
     private TaskRepository taskRepository;
@@ -31,6 +34,31 @@ public class BoardController {
     private UserRepository userRepository;
     @Autowired
     private SectionRepository sectionRepository;
+
+    @RequestMapping(value = "{id}")
+    public ModelAndView getBoardById(@PathVariable("id") int boardId,
+                                     @AuthenticationPrincipal UserDetailsImpl principal,
+                                     ModelAndView modelAndView) throws BoardNotFoundException, PermissionDeniedException {
+
+        User tokenUser = userRepository.findByEmail(principal.getEmail()).get();
+        Optional<Board> board = boardRepository.findById(boardId);
+        Optional<Membership> membership =
+                membershipRepository.getMembershipsByBoardIdAndUserId(boardId, tokenUser.getId());
+
+        if(board.isPresent()) {
+            if(membership.isPresent()){
+                modelAndView.addObject("board", board.get());
+            }
+            else {
+                throw new PermissionDeniedException("You have no permission to see this board");
+            }
+        }
+        else {
+            throw new BoardNotFoundException("Board with the given id does not exist");
+        }
+        modelAndView.setViewName("fragments/actions/board-by-id");
+        return modelAndView;
+    }
 
     @ResponseBody
     @RequestMapping(value = "/{BID}/tasks", method = RequestMethod.GET)

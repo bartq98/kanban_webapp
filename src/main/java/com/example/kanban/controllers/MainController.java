@@ -87,78 +87,7 @@ public class MainController {
             }
         }
     }
-    @PostMapping(path="/add_task") // Map ONLY POST Requests
-    public @ResponseBody String addNewTask (
-            @RequestParam Integer column_id
-            , @RequestParam Integer executive_id
-            , @RequestParam String title
-            , @RequestParam String description) {
 
-        Task t = new Task();
-        t.setColumn_id(column_id);
-        t.setExecutive_id(executive_id);
-        t.setCreated_at();
-        t.setExpires_at(LocalDateTime.now().plusDays(1));
-        t.setTitle(title);
-        t.setDescription(description);
-        taskRepository.save(t);
-        return "Saved";
-    }
-
-
-    @GetMapping(path = "/all_users")
-    public @ResponseBody
-    Iterable<User> getAllUsers() {
-        // This returns a JSON or XML with the users
-        List<Membership> membershipList = userRepository.getAllMemberships(2);
-        System.out.println("HEJ");
-        for (Membership m : membershipList) {
-            System.out.println(m.getUserId());
-        }
-        return userRepository.findAll();
-    }
-
-    @GetMapping(path = "/all_tasks")
-    public @ResponseBody
-    Iterable<Task> getAllTasks() {
-        // This returns a JSON or XML with the users
-        return taskRepository.findAll();
-    }
-
-    @PostMapping(path = "/add_board") // Map ONLY POST Requests
-    public @ResponseBody
-    String addNewBoard(@RequestParam String name
-            , @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt
-            , @RequestParam String slug) {
-        Board n = new Board();
-        n.setName(name);
-        n.setCreated_at(createdAt);
-        n.setSlug(slug);
-        boardRepository.save(n);
-        return "Saved";
-    }
-
-    @PostMapping(path = "/add_membership") // Map ONLY POST Requests
-    public @ResponseBody
-    String addNewMembership(@RequestParam Integer uid
-            , @RequestParam Integer boardId) {
-        Membership n = new Membership();
-
-        Optional<User> users = userRepository.findById(uid);
-        Optional<Board> board = boardRepository.findById(boardId);
-        if (users.isPresent() && board.isPresent()) {
-            n.setUserId(users.get());
-            n.setBoardId(board.get());
-            membershipRepository.save(n);
-            return "Saved";
-        } else return "Error";
-    }
-
-    @GetMapping(path="/info")
-    public String Info(@AuthenticationPrincipal UserDetailsImpl principal, Model model){
-        model.addAttribute("userinfo", userRepository.findByEmail(principal.getEmail()).get());
-        return "fragments/userprofile";
-    }
 
     @RequestMapping(value="/forgot-password", method=RequestMethod.GET)
     public ModelAndView displayResetPassword(ModelAndView modelAndView, User user) {
@@ -224,43 +153,6 @@ public class MainController {
         }
 
         modelAndView.setViewName("fragments/forms/login");
-        return modelAndView;
-    }
-
-
-    @RequestMapping(value = "/get-current-boards", method = RequestMethod.GET)
-    public ModelAndView getLoggedUserBoard(@AuthenticationPrincipal UserDetailsImpl principal, ModelAndView modelAndView) {
-        User tokenUser = userRepository.findByEmail(principal.getEmail()).get();
-        Optional<Board[]> boards = boardRepository.getAllBoards(tokenUser.getId());
-        if(boards.isPresent()) {
-            modelAndView.addObject("boards", boards.get());
-        }
-        modelAndView.setViewName("fragments/actions/board");
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "board/{id}")
-    public ModelAndView getBoardById(@PathVariable("id") int boardId,
-                                     @AuthenticationPrincipal UserDetailsImpl principal,
-                                     ModelAndView modelAndView) throws BoardNotFoundException, PermissionDeniedException {
-
-        User tokenUser = userRepository.findByEmail(principal.getEmail()).get();
-        Optional<Board> board = boardRepository.findById(boardId);
-        Optional<Membership> membership =
-                membershipRepository.getMembershipsByBoardIdAndUserId(boardId, tokenUser.getId());
-
-        if(board.isPresent()) {
-            if(membership.isPresent()){
-                modelAndView.addObject("board", board.get());
-            }
-            else {
-                throw new PermissionDeniedException("You have no permission to see this board");
-            }
-        }
-        else {
-            throw new BoardNotFoundException("Board with the given id does not exist");
-        }
-        modelAndView.setViewName("fragments/actions/board-by-id");
         return modelAndView;
     }
 }
