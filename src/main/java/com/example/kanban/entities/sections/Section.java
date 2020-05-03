@@ -35,13 +35,9 @@ public class Section {
         this.id = id;
     }
 
-    public Integer getBoard_id() {
-        return board.getId();
-    }
+    public Board getBoard() { return board; }
 
-    public void setBoard_id(Integer board_id) {
-        this.board.setId(board_id);
-    }
+    public void setBoard(Board board) { this.board = board; }
 
     public String getName() {
         return name;
@@ -66,4 +62,8 @@ public class Section {
     public void setOrdering(Integer ordering) {
         this.ordering = ordering;
     }
+
+    public Set<Task> getTasks() { return tasks; }
+
+    public void setTasks(Set<Task> tasks) { this.tasks = tasks; }
 }

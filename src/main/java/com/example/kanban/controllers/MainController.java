@@ -2,6 +2,10 @@ package com.example.kanban.controllers;
 
 import com.example.kanban.entities.confirmationtoken.ConfirmationToken;
 import com.example.kanban.entities.confirmationtoken.ConfirmationTokenRepository;
+import com.example.kanban.entities.membership.MemberType;
+import com.example.kanban.entities.sections.ColorType;
+import com.example.kanban.entities.sections.Section;
+import com.example.kanban.entities.sections.SectionRepository;
 import com.example.kanban.services.EmailSenderService;
 import com.example.kanban.exceptions.BoardNotFoundException;
 import com.example.kanban.exceptions.EmailNotFoundResetPassword;
@@ -31,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +56,8 @@ public class MainController {
     private ConfirmationTokenRepository confirmationTokenRepository;
     @Autowired
     private EmailSenderService emailSenderService;
+    @Autowired
+    private SectionRepository sectionRepository;
 
 
     @GetMapping(path = "/register")
@@ -154,5 +161,44 @@ public class MainController {
 
         modelAndView.setViewName("fragments/forms/login");
         return modelAndView;
+    }
+
+    @GetMapping(path = "/add-new-board")
+    public String addNewBoardForm(Model model) {
+        model.addAttribute("board", new Board());
+        model.addAttribute("section", new Section());
+        return "fragments/forms/add-new-board";
+    }
+
+    @PostMapping(path = "/add-new-board")
+    public String addNewBoardSubmit(@Valid @ModelAttribute Board board,
+                                    @Valid @ModelAttribute Membership membership,
+                                    @Valid @ModelAttribute Section section,
+                                    @AuthenticationPrincipal UserDetailsImpl principal,
+                                    BindingResult result,
+                                    RedirectAttributes attributes) {
+        if (result.hasErrors()) {
+            attributes.addFlashAttribute("create_board_fail", "Check if you have all fields");
+            return "fragments/forms/add-new-board";
+        } else {
+            board.setCreated_at(LocalDateTime.now());
+            Slugify slug = new Slugify();
+            board.setSlug(slug.parse(board.getName()));
+            boardRepository.save(board);
+
+            User user = userRepository.findByEmail(principal.getEmail()).get();
+            membership.setMember_type(MemberType.MANAGER);
+            membership.setBoardId(board);
+            membership.setUserId(user);
+            membershipRepository.save(membership);
+
+            section.setBoard(board);
+            section.setColor(ColorType.BLUE_BASIC);
+            section.setOrdering(1);
+            sectionRepository.save(section);
+
+            attributes.addFlashAttribute("create_board_success", "You successfully added a new board!");
+            return "redirect:/";
+        }
     }
 }

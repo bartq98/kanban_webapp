@@ -1,0 +1,17 @@
+<div layout:fragment="form" layout:decorate="~{layouts/entry}">
+
+    <h1>Add new board</h1>
+    <div th:if="${create_board_fail}">
+        <p th:text="${create_board_fail}"></p>
+    </div>
+    <form action="#" th:action="@{/add-new-board}" method="post">
+
+        <p>Board name: <input type="text" th:name="board" th:field="${board.name}" /></p>
+        <p th:if="${#fields.hasErrors('board.name')}" th:errors="${board.name}">Name Error</p>
+
+        <p>Section #1 name: <input type="text" th:name="section" th:field="${section.name}" /></p>
+        <p th:if="${#fields.hasErrors('section.name')}" th:errors="${section.name}">Name Error</p>
+
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+</div>
