@@ -6,6 +6,7 @@ import com.example.kanban.entities.sections.Section;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -29,6 +30,24 @@ public class Board {
 
     @OneToMany(mappedBy = "board")
     private Set<Membership> memberships;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Board board = (Board) o;
+        return getId().equals(board.getId()) &&
+                Objects.equals(getName(), board.getName()) &&
+                Objects.equals(getCreated_at(), board.getCreated_at()) &&
+                Objects.equals(getSlug(), board.getSlug()) &&
+                Objects.equals(sections, board.sections) &&
+                Objects.equals(memberships, board.memberships);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 
     public Integer getId() {
         return id;
