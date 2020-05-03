@@ -33,7 +33,6 @@ public class MembershipKey implements Serializable {
     public int hashCode() {
         final int prime = 17;
         int result = (int) prime * board.hashCode() * user.hashCode();
-        System.out.println(result);
         return result;
     }
 
