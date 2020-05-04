@@ -16,7 +16,7 @@ public class Section {
     private Board board;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
     @Enumerated(EnumType.STRING)
     private ColorType color;
@@ -39,12 +39,12 @@ public class Section {
 
     public void setBoard(Board board) { this.board = board; }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public ColorType getColor() {
