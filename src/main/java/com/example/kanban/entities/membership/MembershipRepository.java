@@ -12,9 +12,11 @@ public interface MembershipRepository extends CrudRepository<Membership, Integer
 
     Optional<Membership> findById(Integer id);
     List<Membership> findByUser(Integer id);
-
+    Optional<Membership> findByUserAndBoard(User user,Board board);
     @Query(value = "SELECT * FROM Membership WHERE board_id = ?1 AND user_id = ?2", nativeQuery = true)
     Optional<Membership> getMembershipsByBoardIdAndUserId(Integer boardId, Integer userId);
+    void deleteById(Integer id);
+
 
     boolean existsByUserAndBoard(User user, Board board);
 }

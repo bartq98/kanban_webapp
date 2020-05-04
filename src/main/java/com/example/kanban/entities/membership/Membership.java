@@ -20,6 +20,10 @@ public class Membership {
     @ManyToOne
     private Board board;
 
+    public MemberType getMember_type() {
+        return member_type;
+    }
+
     public void setMember_type(MemberType member_type) {
         this.member_type = member_type;
     }
@@ -32,12 +36,12 @@ public class Membership {
         return this.board.getId();
     }
 
-    public void setBoardId(Board boardId) {
-        this.board = boardId;
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
-    public void setUserId(User userId) {
-        this.user = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Integer getId(){
