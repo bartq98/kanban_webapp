@@ -4,14 +4,27 @@
     <div th:if="${create_board_fail}">
         <p th:text="${create_board_fail}"></p>
     </div>
-    <form action="#" th:action="@{/add-new-board}" method="post">
+    <form action="#" th:action="@{/add-new-board}" th:object="${board}" method="post" id="board-form">
+        <p>Board name: <input type="text" th:name="board" th:field="*{name}" /></p>
+        <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</p>
+    </form>
+    <form action="#" th:action="@{/add-new-board}" th:object="${section}" method="post" id="section-form">
+        <p>Section #1 name: <input type="text" th:name="section" th:field="*{name}" /></p>
+        <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</p>
 
-        <p>Board name: <input type="text" th:name="board" th:field="${board.name}" /></p>
-        <p th:if="${#fields.hasErrors('board.name')}" th:errors="${board.name}">Name Error</p>
-
-        <p>Section #1 name: <input type="text" th:name="section" th:field="${section.name}" /></p>
-        <p th:if="${#fields.hasErrors('section.name')}" th:errors="${section.name}">Name Error</p>
-
-        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+        <p><input type="submit" value="Submit" id="frm-submit" /> <input type="reset" value="Reset" /></p>
     </form>
 </div>
+
+<script type="text/javascript" th:inline="javascript">
+     $('#frm-submit').submit(function(e){
+       var dataString = $("#board-form, #section-form").serialize();
+       e.preventDefault();
+           $.ajax( {
+            type: 'POST',
+            url: '/add-new-board',
+            data: dataString
+        });
+        console.log("dupa");
+     })
+</script>
