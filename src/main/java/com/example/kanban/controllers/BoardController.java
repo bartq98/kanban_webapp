@@ -16,6 +16,7 @@ import com.example.kanban.entities.user.UserDetailsImpl;
 import com.example.kanban.entities.user.UserRepository;
 import com.example.kanban.exceptions.PermissionDeniedException;
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -53,12 +54,15 @@ public class BoardController {
             if(membership.isPresent()){
                 modelAndView.addObject("board", board.get());
                 MemberType this_user=membership.get().getMember_type();
-                if(this_user==MemberType.MANAGER){
+                if(this_user==MemberType.OWNER){
                     modelAndView.addObject("permission","allowed");
+                }
+                if(this_user==MemberType.EXECUTOR){
+                    modelAndView.addObject("executor","allowed");
                 }
             }
             else {
-                throw new PermissionDeniedException("You have no permission to see this board");
+                throw new PermissionDeniedException("You don't have no permission to see this board");
             }
         }
         else {
@@ -102,6 +106,7 @@ public class BoardController {
     @ResponseBody
     @RequestMapping(value = "/{BID}/sections_from_board", method = RequestMethod.GET)
     public Optional<Section[]> SectionsBoard(@PathVariable int BID) throws JSONException {
+
         Optional<Section[]> sections=sectionRepository.getSectionsFromBoard(BID);
         if(sections.isPresent()) {
             return sections;
@@ -109,6 +114,14 @@ public class BoardController {
         else {
             throw new JSONException("Section not found");
         }
+    }
+    @ResponseBody
+    @RequestMapping(value="/{BID}/user_type",method = RequestMethod.GET)
+    public Optional<Membership> UserTypeForBoard(@PathVariable int BID,@AuthenticationPrincipal UserDetailsImpl principal){
+        Board boardOptional=boardRepository.findById(BID).get();
+        User userOptional = userRepository.findByEmail(principal.getEmail()).get();
+        Optional<Membership> membershipOptional=membershipRepository.findByUserAndBoard(userOptional,boardOptional);
+        return membershipOptional;
     }
     @PostMapping(path="/{BID}/add_new_user_to_board")
     public ModelAndView addNewUserToBoard(@PathVariable Integer BID, @RequestParam String user_email, @RequestParam MemberType user_type,RedirectAttributes redirectAttributes){

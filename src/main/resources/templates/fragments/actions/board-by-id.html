@@ -33,13 +33,14 @@
         </form>
     </div>
 
+
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
 
 
         $(document).ready(function () {
             var BID = /*[[${board.id}]]*/ '1';
-            var tasksData, sectionData;
+            var tasksData, sectionData,memberData;
 
             $.when(
                 $.getJSON("/board/" + BID +"/tasks", function (data) {
@@ -56,6 +57,9 @@
                     });
                     console.debug(sectionData);
 
+                }),
+                $.getJSON("/board/" + BID + "/user_type",function(data){
+                    memberData=data;
                 })
                 /* For debug
                 .done(function() {
@@ -104,12 +108,16 @@
                     let newColumn = args.newColumn;
                     console.debug(event);
                 });
-                // $('#kanban').find('*').each(function() {
-                //     $(this).unbind();
-                // });
+                if(memberData.member_type=='EXECUTOR'){
+                 $('#kanban').find('*').each(function() {
+                    $(this).unbind();
+                 });
+                 }
             });
         });
 
         /*]]>*/
     </script>
+
+
 </div>
