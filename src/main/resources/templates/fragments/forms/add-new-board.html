@@ -6,61 +6,68 @@
     </div>
     <form action="#" th:action="@{/add-new-board}" method="post" enctype="multipart/form-data">
 
-        <p>Board name: <input type="text" th:name="board" th:field="${board.name}" /></p>
+        <p>Board name: <input type="text" th:field="${board.name}" /></p>
         <p th:if="${#fields.hasErrors('board.name')}" th:errors="${board.name}">Name Error</p>
 
-        <div id="movieList">
-            <div class="row">
-                <div class="col form-group">title</div>
-            </div>
-            <div class="row item">
-                <div class="col form-group d-none">
-                    <input type="text"/>
-                </div>
-            </div>
-        </div>
+        <p>Section titles: </p>
+        <table class="table table-bordered" id="tbl_posts">
+            <tbody id="tbl_posts_body">
+                <tr id="rec-1">
+                    <td><input type="text" th:field="${sections.title}"/></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
 
-        <div class="row">
-            <div class="col">
-                <button type="button" onclick="addRow()">Add row</button>
-            </div>
-        </div>
-
+        <a class="btn add-record" data-added="0"><i class="glyphicon glyphicon-plus"> </i></a>
         <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
     </form>
 
+    <div style="display:none;">
+        <table id="sample_table">
+            <tr id="">
+                <td><input type="text" th:field="${sections.title}"/></td>
+                <td><a class="btn btn-xs delete-record" data-id="0"><i class="glyphicon glyphicon-trash"></i></a></td>
+            </tr>
+        </table>
+    </div>
 
 </div>
 
 
     <script th:inline="javascript">
-            let addRow = function () {
-            let listName = 'section'; //list name in Catalog.class
-            let fieldsNames = ['title']; //field names from Movie.class
-            let rowIndex = document.querySelectorAll('.item').length; //we can add mock class to each movie-row
 
-            let row = document.createElement('div');
-            row.classList.add('row', 'item');
+        jQuery(document).delegate('a.add-record', 'click', function(e) {
+             e.preventDefault();
+             var content = jQuery('#sample_table tr'),
+             size = jQuery('#tbl_posts >tbody >tr').length + 1,
+             element = null,
+             element = content.clone();
+             element.attr('id', 'rec-'+size);
+             element.find('.delete-record').attr('data-id', size);
+             element.appendTo('#tbl_posts_body');
+             element.find('.sn').html(size);
+           });
 
-            fieldsNames.forEach((fieldName) => {
-                let col = document.createElement('div');
-                col.classList.add('col', 'form-group');
-                if (fieldName === 'id') {
-                    col.classList.add('d-none'); //field with id - hidden
-                }
 
-                let input = document.createElement('input');
-                input.type = 'text';
-                input.classList.add('form-control');
-                input.id = listName + rowIndex + '.' + fieldName;
-                input.setAttribute('name', listName + '[' + rowIndex + '].' + fieldName);
+        jQuery(document).delegate('a.delete-record', 'click', function(e) {
+             e.preventDefault();
+             var didConfirm = confirm("Are you sure You want to delete");
+             if (didConfirm == true) {
+              var id = jQuery(this).attr('data-id');
+              var targetDiv = jQuery(this).attr('targetDiv');
+              jQuery('#rec-' + id).remove();
 
-                col.appendChild(input);
-                row.appendChild(col);
+            //regnerate index number on table
+            $('#tbl_posts_body tr').each(function(index) {
+              //alert(index);
+              $(this).find('span.sn').html(index+1);
             });
-
-            document.getElementById('movieList').appendChild(row);
-    };
+            return true;
+          } else {
+            return false;
+          }
+        });
     </script>
 
 </div>
