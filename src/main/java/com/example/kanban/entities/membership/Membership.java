@@ -9,9 +9,7 @@ import javax.persistence.*;
 @Entity
 @IdClass(MembershipKey.class)
 public class Membership {
-//    @Id
-//    @GeneratedValue(strategy=GenerationType.AUTO)
-//    private Integer id;
+
     @Enumerated(EnumType.STRING)
     private MemberType member_type;
 
@@ -22,6 +20,10 @@ public class Membership {
     @Id
     @ManyToOne
     private Board board;
+
+    public MemberType getMember_type() {
+        return member_type;
+    }
 
     public void setMember_type(MemberType member_type) {
         this.member_type = member_type;
@@ -35,8 +37,19 @@ public class Membership {
         return this.board.getId();
     }
 
-    public void setBoardId(Board boardId) {
-        this.board = boardId;
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Board getBoard(){
+        return this.board;
+    }
+
+    public User getUser(){
+        return this.user;
+    }
 }

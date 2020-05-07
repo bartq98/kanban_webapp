@@ -10,13 +10,37 @@
     <div id='kanban'>
     </div>
 
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div th:if="${permission}">
+        <p>Dodaj lub edytuj użytkownika</p>
+        <form action="#" th:action="@{${redirect_add}}" method="post">
+            <p>Podaj E-mail:</p>
+            <input type="email" th:value="${email}" name="user_email" />
+            <select name="user_type" style="display :block">
+                <option th:each="type : ${T(com.example.kanban.entities.membership.MemberType).values()}"
+                        th:value="${type}" th:text="${type}"></option>
+            </select>
+            <input type="submit">
+        </form>
+        <p>Usuń użytkownika</p>
+        <form action="#" th:action="@{${redirect_delete}}" method="post">
+            <p>Podaj E-mail:</p>
+            <input type="email" th:value="${email_to_delete}" name="user_email_to_delete" />
+            <input type="submit">
+        </form>
+    </div>
+
+
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
 
 
         $(document).ready(function () {
             var BID = /*[[${board.id}]]*/ '1';
-            var tasksData, sectionData;
+            var tasksData, sectionData,memberData;
 
             $.when(
                 $.getJSON("/board/" + BID +"/tasks", function (data) {
@@ -33,6 +57,9 @@
                     });
                     console.debug(sectionData);
 
+                }),
+                $.getJSON("/board/" + BID + "/user_type",function(data){
+                    memberData=data;
                 })
                 /* For debug
                 .done(function() {
@@ -81,12 +108,16 @@
                     let newColumn = args.newColumn;
                     console.debug(event);
                 });
-                // $('#kanban').find('*').each(function() {
-                //     $(this).unbind();
-                // });
+                if(memberData.member_type=='EXECUTOR'){
+                 $('#kanban').find('*').each(function() {
+                    $(this).unbind();
+                 });
+                 }
             });
         });
 
         /*]]>*/
     </script>
+
+
 </div>
