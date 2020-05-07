@@ -35,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -165,15 +166,27 @@ public class MainController {
 
     @GetMapping(path = "/add-new-board")
     public String addNewBoardForm(Model model) {
+        List<Section> sections =  new ArrayList<>();
+//        Section todo = new Section();
+////        todo.setTitle("To do");
+//        Section inprogress = new Section();
+////        inprogress.setTitle("In progress");
+//        Section done = new Section();
+////        done.setTitle("Done");
+//        sections.add(todo);
+//        sections.add(inprogress);
+//        sections.add(done);
         model.addAttribute("board", new Board());
-        model.addAttribute("section", new Section());
+        model.addAttribute("sections", sections);
         return "fragments/forms/add-new-board";
     }
 
     @PostMapping(path = "/add-new-board")
     public String addNewBoardSubmit(@Valid @ModelAttribute Board board,
                                     @Valid @ModelAttribute Membership membership,
-                                    @Valid @ModelAttribute Section section,
+//                                    @Valid @ModelAttribute List<Section> sections,
+                                    @PathVariable String title,
+                                    Model model,
                                     @AuthenticationPrincipal UserDetailsImpl principal,
                                     BindingResult result,
                                     RedirectAttributes attributes) {
@@ -192,11 +205,15 @@ public class MainController {
             membership.setUserId(user);
             membershipRepository.save(membership);
 
-            section.setBoard(board);
-            section.setColor(ColorType.BLUE_BASIC);
-            section.setOrdering(1);
-            sectionRepository.save(section);
-
+////            List<Section> sections;
+//            model.addAttribute("sections", sections);
+            System.out.println(title.split(","));
+//            for(Section section : sections){
+//                section.setBoard(board);
+//                section.setColor(ColorType.BLUE_BASIC);
+//                section.setOrdering(1);
+//                sectionRepository.save(section);
+//            }
             attributes.addFlashAttribute("create_board_success", "You successfully added a new board!");
             return "redirect:/";
         }
