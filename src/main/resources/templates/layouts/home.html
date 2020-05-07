@@ -8,4 +8,9 @@
     <div sec:authorize="isAnonymous()" th:insert="fragments/actions/user :: form">
 
     </div>
+
+    <div th:if="${create_board_success}">
+        <p th:text="${create_board_success}"></p>
+    </div>
+
 </div>

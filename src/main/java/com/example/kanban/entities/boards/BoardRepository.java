@@ -17,5 +17,7 @@ public interface BoardRepository extends CrudRepository<Board, Integer> {
     @Query("SELECT m.board FROM Membership m WHERE m.user.id = :logged_user")
     Optional<Board[]> getAllBoards(@Param("logged_user") Integer id);
 
+    boolean existsByName(String name);
+
     Optional<Board> findById(Integer id);
 }

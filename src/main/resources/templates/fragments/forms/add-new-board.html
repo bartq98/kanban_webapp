@@ -1,0 +1,74 @@
+<div layout:fragment="form" layout:decorate="~{layouts/entry}">
+
+    <h1>Add new board</h1>
+    <div th:if="${create_board_fail}">
+        <p th:text="${create_board_fail}"></p>
+    </div>
+    <form action="#" th:action="@{/add-new-board}" method="post" enctype="multipart/form-data">
+
+        <p>Board name: <input type="text" th:field="${board.name}" /></p>
+        <p th:if="${#fields.hasErrors('board.name')}" th:errors="${board.name}">Name Error</p>
+
+        <p>Section titles: </p>
+        <table class="table table-bordered" id="tbl_posts">
+            <tbody id="tbl_posts_body">
+                <tr id="rec-1">
+                    <td><input type="text" th:field="${sections.title}"/></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a class="btn add-record" data-added="0"><i class="glyphicon glyphicon-plus"> </i></a>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+
+    <div style="display:none;">
+        <table id="sample_table">
+            <tr id="">
+                <td><input type="text" th:field="${sections.title}"/></td>
+                <td><a class="btn btn-xs delete-record" data-id="0"><i class="glyphicon glyphicon-trash"></i></a></td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+
+    <script th:inline="javascript">
+
+        jQuery(document).delegate('a.add-record', 'click', function(e) {
+             e.preventDefault();
+             var content = jQuery('#sample_table tr'),
+             size = jQuery('#tbl_posts >tbody >tr').length + 1,
+             element = null,
+             element = content.clone();
+             element.attr('id', 'rec-'+size);
+             element.find('.delete-record').attr('data-id', size);
+             element.appendTo('#tbl_posts_body');
+             element.find('.sn').html(size);
+           });
+
+
+        jQuery(document).delegate('a.delete-record', 'click', function(e) {
+             e.preventDefault();
+             var didConfirm = confirm("Are you sure You want to delete");
+             if (didConfirm == true) {
+              var id = jQuery(this).attr('data-id');
+              var targetDiv = jQuery(this).attr('targetDiv');
+              jQuery('#rec-' + id).remove();
+
+            //regnerate index number on table
+            $('#tbl_posts_body tr').each(function(index) {
+              //alert(index);
+              $(this).find('span.sn').html(index+1);
+            });
+            return true;
+          } else {
+            return false;
+          }
+        });
+    </script>
+
+</div>
+
