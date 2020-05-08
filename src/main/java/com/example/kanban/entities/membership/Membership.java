@@ -37,11 +37,11 @@ public class Membership {
         return this.board.getId();
     }
 
-    public void setBoard(Board board) {
+    public void setBoardId(Board board) {
         this.board = board;
     }
 
-    public void setUser(User user) {
+    public void setUserId(User user) {
         this.user = user;
     }
 

@@ -7,12 +7,12 @@ import java.io.Serializable;
 
 public class MembershipKey implements Serializable {
 
-    private User user;
-    private Board board;
+    private Integer user;
+    private Integer board;
 
     public MembershipKey(){}
 
-    public MembershipKey(User user, Board board){
+    public MembershipKey(Integer user, Integer board){
         this.user = user;
         this.board = board;
     }
@@ -26,7 +26,7 @@ public class MembershipKey implements Serializable {
             return false;
         }
         MembershipKey mk = (MembershipKey) obj;
-        return (mk.user.getId().equals(this.user.getId())) || (mk.board.getId().equals(this.board.getId()));
+        return (mk.user.equals(this.user)) || (mk.board.equals(this.board));
     }
 
     @Override
@@ -36,21 +36,19 @@ public class MembershipKey implements Serializable {
         return result;
     }
 
-
-    public User getUser() {
+    public Integer getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Integer user) {
         this.user = user;
     }
 
-    public Board getBoard() {
+    public Integer getBoard() {
         return board;
     }
 
-    public void setBoard(Board board) {
+    public void setBoard(Integer board) {
         this.board = board;
     }
-
 }

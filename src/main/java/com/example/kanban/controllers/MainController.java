@@ -185,7 +185,7 @@ public class MainController {
             boardRepository.save(board);
 
             User user = userRepository.findByEmail(principal.getEmail()).get();
-            membership.setMember_type(MemberType.MANAGER);
+            membership.setMember_type(MemberType.OWNER);
             membership.setBoardId(board);
             membership.setUserId(user);
             membershipRepository.save(membership);

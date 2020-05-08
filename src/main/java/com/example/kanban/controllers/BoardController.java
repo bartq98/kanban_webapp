@@ -133,8 +133,8 @@ public class BoardController {
             Board board=boardOptional.get();
             if(!membershipRepository.existsByUserAndBoard(user,board)){
                 Membership membership=new Membership();
-                membership.setUser(user);
-                membership.setBoard(board);
+                membership.setUserId(user);
+                membership.setBoardId(board);
                 membership.setMember_type(user_type);
                 membershipRepository.save(membership);
                 redirectAttributes.addFlashAttribute("message","Dodano użytkownika");
