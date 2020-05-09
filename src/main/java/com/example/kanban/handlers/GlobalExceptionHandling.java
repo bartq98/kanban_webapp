@@ -1,6 +1,6 @@
 package com.example.kanban.handlers;
 
-import com.example.kanban.exceptions.*;
+import com.example.kanban.exceptions.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

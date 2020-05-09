@@ -1,4 +1,4 @@
-package com.example.kanban.exceptions;
+package com.example.kanban.exceptions.exceptions;
 
 public class EmailNotFoundResetPassword extends Exception{
     public EmailNotFoundResetPassword(String errorMessage){
