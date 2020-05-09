@@ -52,7 +52,7 @@
                     sectionData = sectionData.map((s) => {
                         return {
                             dataField: s.id,
-                            text: s.name
+                            text: s.title
                         }
                     });
                     console.debug(sectionData);
@@ -61,17 +61,6 @@
                 $.getJSON("/board/" + BID + "/user_type",function(data){
                     memberData=data;
                 })
-                /* For debug
-                .done(function() {
-                    console.log( "second success" );
-                 })
-                .fail(function() {
-                    console.log( "error" );
-                })
-                .always(function() {
-                    console.log( "complete" );
-                });
-                 */
             ).then(function () {
                 let fields = [
                     { name: "id", type: "string" },

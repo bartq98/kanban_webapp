@@ -2,18 +2,27 @@ package com.example.kanban.controllers;
 
 import com.example.kanban.entities.confirmationtoken.ConfirmationToken;
 import com.example.kanban.entities.confirmationtoken.ConfirmationTokenRepository;
+import com.example.kanban.entities.membership.MemberType;
+import com.example.kanban.entities.sections.ColorType;
+import com.example.kanban.entities.sections.Section;
+import com.example.kanban.entities.sections.SectionRepository;
 import com.example.kanban.services.EmailSenderService;
 import com.example.kanban.exceptions.exceptions.EmailNotFoundResetPassword;
 import com.example.kanban.exceptions.exceptions.ObjectNotFoundException;
 import com.example.kanban.entities.membership.MembershipRepository;
+import com.example.kanban.entities.task.Task;
 import com.example.kanban.entities.task.TaskRepository;
 import com.example.kanban.entities.user.User;
+import com.example.kanban.entities.user.UserDetailsImpl;
 import com.example.kanban.entities.user.UserRepository;
+import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.boards.BoardRepository;
 import com.example.kanban.services.ExceptionsFacade;
 import com.example.kanban.services.Slugify;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +32,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Controller
 @RequestMapping(path="/")
@@ -42,6 +52,8 @@ public class MainController {
     private ConfirmationTokenRepository confirmationTokenRepository;
     @Autowired
     private EmailSenderService emailSenderService;
+    @Autowired
+    private SectionRepository sectionRepository;
 
 
     @GetMapping(path = "/register")
@@ -148,5 +160,48 @@ public class MainController {
 
         modelAndView.setViewName("fragments/forms/login");
         return modelAndView;
+    }
+
+    @GetMapping(path = "/add-new-board")
+    public String addNewBoardForm(Model model) {
+        model.addAttribute("board", new Board());
+        model.addAttribute("sections", new Section());
+        return "fragments/forms/add-new-board";
+    }
+
+    @PostMapping(path = "/add-new-board")
+    public String addNewBoardSubmit(@Valid @ModelAttribute Board board,
+                                    @Valid @ModelAttribute Membership membership,
+                                    @Valid @ModelAttribute Section sections,
+                                    @AuthenticationPrincipal UserDetailsImpl principal,
+                                    BindingResult result,
+                                    RedirectAttributes attributes) {
+        if (result.hasErrors()) {
+            attributes.addFlashAttribute("create_board_fail", "Check if you have all fields");
+            return "fragments/forms/add-new-board";
+        } else {
+            board.setCreated_at(LocalDateTime.now());
+            Slugify slug = new Slugify();
+            board.setSlug(slug.parse(board.getName()));
+            boardRepository.save(board);
+
+            User user = userRepository.findByEmail(principal.getEmail()).get();
+            membership.setMember_type(MemberType.OWNER);
+            membership.setBoardId(board);
+            membership.setUserId(user);
+            membershipRepository.save(membership);
+
+            List<String> section_titles = Arrays.asList(sections.getTitle().split(","));;
+            for(String title : section_titles){
+                Section section = new Section();
+                section.setTitle(title);
+                section.setBoard(board);
+                section.setColor(ColorType.BLUE_BASIC);
+                section.setOrdering(1);
+                sectionRepository.save(section);
+            }
+            attributes.addFlashAttribute("create_board_success", "You successfully added a new board!");
+            return "redirect:/";
+        }
     }
 }

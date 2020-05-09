@@ -16,7 +16,7 @@ public class Section {
     private Board board;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
     @Enumerated(EnumType.STRING)
     private ColorType color;
@@ -35,20 +35,16 @@ public class Section {
         this.id = id;
     }
 
-    public Integer getBoard_id() {
-        return board.getId();
+    public Board getBoard() { return board; }
+
+    public void setBoard(Board board) { this.board = board; }
+
+    public String getTitle() {
+        return title;
     }
 
-    public void setBoard_id(Integer board_id) {
-        this.board.setId(board_id);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public ColorType getColor() {
@@ -66,4 +62,8 @@ public class Section {
     public void setOrdering(Integer ordering) {
         this.ordering = ordering;
     }
+
+    public Set<Task> getTasks() { return tasks; }
+
+    public void setTasks(Set<Task> tasks) { this.tasks = tasks; }
 }

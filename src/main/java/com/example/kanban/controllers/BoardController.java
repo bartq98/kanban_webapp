@@ -164,7 +164,7 @@ public class BoardController {
             Board board=boardOptional.get();
             if(membershipRepository.existsByUserAndBoard(user,board)){
                 Membership membership=membershipRepository.findByUserAndBoard(user,board).get();
-                membershipRepository.deleteById(membership.getId());
+                membershipRepository.deleteByUserAndBoard(membership.getUser(), membership.getBoard());
                 redirectAttributes.addFlashAttribute("message","Skasowano użytkownika");
             }
             else{
