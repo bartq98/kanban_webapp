@@ -95,7 +95,23 @@
                     let itemData = args.itemData;
                     let oldColumn = args.oldColumn;
                     let newColumn = args.newColumn;
-                    console.debug(event);
+                    console.debug(event.args.newColumn.dataField);
+                    console.debug(event.args.oldColumn.dataField);
+                    console.debug(event.args.itemId);
+                    let jsonData = {
+                        "taskId": parseInt(event.args.itemId),
+                        "oldColumn": event.args.oldColumn.dataField,
+                        "newColumn": event.args.newColumn.dataField
+                    };
+                    $.ajax({
+                        url: BID + '/move_task',
+                        data: JSON.stringify(jsonData),
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        // success: function(){ todo: It can be done later
+                        //     alert("You've moved task from " + jsonData.oldColumn + " to " + jsonData.newColumn);
+                        // }
+                    });
                 });
                 if(memberData.member_type=='EXECUTOR'){
                  $('#kanban').find('*').each(function() {

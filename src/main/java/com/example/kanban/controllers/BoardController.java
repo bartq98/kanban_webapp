@@ -1,5 +1,6 @@
 package com.example.kanban.controllers;
 
+import com.example.kanban.entities.dao.MovedTask;
 import com.example.kanban.entities.membership.MemberType;
 import com.example.kanban.entities.membership.Membership;
 import com.example.kanban.exceptions.BoardNotFoundException;
@@ -113,6 +114,15 @@ public class BoardController {
             throw new JSONException("Section not found");
         }
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/{BID}/move_task", method = RequestMethod.POST)
+    public void moveTask(@PathVariable int BID, @RequestBody MovedTask data) {
+        Section s = sectionRepository.findFirstById(data.getNewColumn());
+        taskRepository.updateOnMove(data.getTaskId(), s);
+
+    }
+
     @ResponseBody
     @RequestMapping(value="/{BID}/user_type",method = RequestMethod.GET)
     public Optional<Membership> UserTypeForBoard(@PathVariable int BID,@AuthenticationPrincipal UserDetailsImpl principal){

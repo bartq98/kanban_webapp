@@ -54,6 +54,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
 
                 .and()
+                .csrf().disable().authorizeRequests()
+
+                .and()
                 .rememberMe() // todo: this doesn't work
                 .key("uniqueAndSecret")
                 .userDetailsService(userDetailsService)
