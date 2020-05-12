@@ -34,6 +34,17 @@ public class Task {
     @Column(name = "task_description")
     private String description;
 
+    public void setSection(Section section) {
+        this.section = section;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setUser_id(Integer id) {
+        this.user.setId(id);
+    }
 
     public Integer getId() {
         return id;
@@ -48,7 +59,7 @@ public class Task {
     }
 
     public void setColumn_id(Integer column_id) {
-        this.section.getId();
+        this.section.setId(column_id);
     }
 
     public Integer getExecutive_id() {
@@ -63,12 +74,12 @@ public class Task {
         return created_at;
     }
 
-    public void setCreated_at() {
-        this.created_at = LocalDateTime.now();
-    }
-
     public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
+    }
+
+    public void setCreated_at() {
+        this.created_at = LocalDateTime.now();
     }
 
     public LocalDateTime getExpires_at() {
@@ -77,6 +88,10 @@ public class Task {
 
     public void setExpires_at(LocalDateTime expires_at) {
         this.expires_at = expires_at;
+    }
+
+    public void setExpires_at() {
+        this.expires_at = LocalDateTime.now();
     }
 
     public String getTitle() {

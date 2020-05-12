@@ -3,6 +3,7 @@ package com.example.kanban.controllers;
 import com.example.kanban.entities.confirmationtoken.ConfirmationToken;
 import com.example.kanban.entities.confirmationtoken.ConfirmationTokenRepository;
 import com.example.kanban.entities.membership.MemberType;
+import com.example.kanban.entities.membership.Membership;
 import com.example.kanban.entities.sections.ColorType;
 import com.example.kanban.entities.sections.Section;
 import com.example.kanban.entities.sections.SectionRepository;

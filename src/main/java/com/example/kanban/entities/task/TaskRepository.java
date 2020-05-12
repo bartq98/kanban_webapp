@@ -20,4 +20,5 @@ public interface TaskRepository extends CrudRepository<Task, Integer> {
     @Modifying @Transactional
     @Query("UPDATE Task t SET t.section = :new_column WHERE t.id = :task_id")
     void updateOnMove(@Param("task_id") Integer task_id, @Param("new_column") Section new_column);
+
 }

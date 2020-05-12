@@ -1,5 +1,6 @@
 package com.example.kanban.controllers;
 
+import com.example.kanban.entities.dao.AddTask;
 import com.example.kanban.entities.dao.MovedTask;
 import com.example.kanban.entities.membership.MemberType;
 import com.example.kanban.entities.membership.Membership;
@@ -123,6 +124,30 @@ public class BoardController {
 
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/{BID}/add_task", method = RequestMethod.POST)
+    public void addTask(@PathVariable int BID, @RequestBody AddTask data, @AuthenticationPrincipal UserDetailsImpl principal) {
+        System.out.println(data.getTitle());
+        System.out.println(data.getDescription());
+        System.out.println(data.getColumn());
+
+        Section s = sectionRepository.findFirstById(data.getColumn());
+        User userOptional = userRepository.findByEmail(principal.getEmail()).get();
+
+        Task newTask = new Task();
+        newTask.setSection(s);
+        newTask.setUser(userOptional);
+        newTask.setCreated_at();
+        newTask.setExpires_at();
+        newTask.setExecutive_id(1);
+        newTask.setTitle(data.getTitle());
+        newTask.setDescription(data.getDescription());
+
+        taskRepository.save(newTask);
+
+    }
+
     @ResponseBody
     @RequestMapping(value="/{BID}/user_type",method = RequestMethod.GET)
     public Optional<Membership> UserTypeForBoard(@PathVariable int BID,@AuthenticationPrincipal UserDetailsImpl principal){
@@ -143,8 +168,8 @@ public class BoardController {
             Board board=boardOptional.get();
             if(!membershipRepository.existsByUserAndBoard(user,board)){
                 Membership membership=new Membership();
-                membership.setUser(user);
-                membership.setBoard(board);
+                membership.setUserId(user);
+                membership.setBoardId(board);
                 membership.setMember_type(user_type);
                 membershipRepository.save(membership);
                 redirectAttributes.addFlashAttribute("message","Dodano użytkownika");
