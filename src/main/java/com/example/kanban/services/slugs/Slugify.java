@@ -1,12 +1,14 @@
-package com.example.kanban.services;
+package com.example.kanban.services.slugs;
 
+import com.example.kanban.services.slugs.ISlug;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 
 @Service
-public class Slugify {
+public class Slugify implements ISlug {
 
+    @Override
     public String parse(String input) {
         if (isEmptyOrNull(input)) return "";
 
