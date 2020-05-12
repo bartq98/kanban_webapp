@@ -1,5 +1,7 @@
 package com.example.kanban.controllers;
 
+import com.example.kanban.customconfigs.SlugConfig;
+import com.example.kanban.customconfigs.SlugProperties;
 import com.example.kanban.entities.confirmationtoken.ConfirmationToken;
 import com.example.kanban.entities.confirmationtoken.ConfirmationTokenRepository;
 import com.example.kanban.entities.membership.MemberType;
@@ -11,7 +13,6 @@ import com.example.kanban.services.EmailSenderService;
 import com.example.kanban.exceptions.exceptions.EmailNotFoundResetPassword;
 import com.example.kanban.exceptions.exceptions.ObjectNotFoundException;
 import com.example.kanban.entities.membership.MembershipRepository;
-import com.example.kanban.entities.task.Task;
 import com.example.kanban.entities.task.TaskRepository;
 import com.example.kanban.entities.user.User;
 import com.example.kanban.entities.user.UserDetailsImpl;
@@ -19,9 +20,10 @@ import com.example.kanban.entities.user.UserRepository;
 import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.boards.BoardRepository;
 import com.example.kanban.services.ExceptionsFacade;
-import com.example.kanban.services.Slugify;
+import com.example.kanban.services.slugs.ISlug;
+import com.example.kanban.services.slugs.LibSlugify;
+import com.example.kanban.services.slugs.Slugify;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,7 +57,8 @@ public class MainController {
     private EmailSenderService emailSenderService;
     @Autowired
     private SectionRepository sectionRepository;
-
+    @Autowired
+    private SlugProperties slugProperties;
 
     @GetMapping(path = "/register")
     public String addNewUserForm(Model model) {
@@ -167,6 +170,8 @@ public class MainController {
     public String addNewBoardForm(Model model) {
         model.addAttribute("board", new Board());
         model.addAttribute("sections", new Section());
+        System.out.println(slugProperties.getSlug());
+
         return "fragments/forms/add-new-board";
     }
 
@@ -182,7 +187,15 @@ public class MainController {
             return "fragments/forms/add-new-board";
         } else {
             board.setCreated_at(LocalDateTime.now());
-            Slugify slug = new Slugify();
+            ISlug slug;
+            if (slugProperties.getSlug().equals("library")) {
+                slug = new LibSlugify();
+            } else if (slugProperties.getSlug().equals("polish")) {
+                slug = new Slugify();
+            } else {
+                slug = new Slugify();
+            }
+
             board.setSlug(slug.parse(board.getName()));
             boardRepository.save(board);
 
