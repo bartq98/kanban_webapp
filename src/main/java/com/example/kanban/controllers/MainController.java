@@ -7,11 +7,8 @@ import com.example.kanban.entities.sections.ColorType;
 import com.example.kanban.entities.sections.Section;
 import com.example.kanban.entities.sections.SectionRepository;
 import com.example.kanban.services.EmailSenderService;
-import com.example.kanban.exceptions.BoardNotFoundException;
-import com.example.kanban.exceptions.EmailNotFoundResetPassword;
-import com.example.kanban.exceptions.ObjectNotFoundException;
-import com.example.kanban.exceptions.PermissionDeniedException;
-import com.example.kanban.entities.membership.Membership;
+import com.example.kanban.exceptions.exceptions.EmailNotFoundResetPassword;
+import com.example.kanban.exceptions.exceptions.ObjectNotFoundException;
 import com.example.kanban.entities.membership.MembershipRepository;
 import com.example.kanban.entities.task.Task;
 import com.example.kanban.entities.task.TaskRepository;
@@ -20,6 +17,7 @@ import com.example.kanban.entities.user.UserDetailsImpl;
 import com.example.kanban.entities.user.UserRepository;
 import com.example.kanban.entities.boards.Board;
 import com.example.kanban.entities.boards.BoardRepository;
+import com.example.kanban.services.ExceptionsFacade;
 import com.example.kanban.services.Slugify;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -117,13 +115,16 @@ public class MainController {
                     + "http://localhost:8080/confirm-reset?token=" + confirmationToken.getConfirmationToken());
 
             emailSenderService.sendEmail(mailMessage);
+            attributes.addFlashAttribute("send_success", "Link do zmiany hasła został wysłany na adres mail");
+            return "redirect:/login";
 
         } else {
+            ExceptionsFacade exceptionsFacade=new ExceptionsFacade();
+            throw exceptionsFacade.throwEmailNotFoundResetPassword("Nie znaleziono podanego adresu E-mail");
+            //throw new EmailNotFoundResetPassword("Nie znaleziono podanego adresu E-mail");
 
-            throw new EmailNotFoundResetPassword("Nie znaleziono podanego adresu E-mail");
         }
-        attributes.addFlashAttribute("send_success", "Link do zmiany hasła został wysłany na adres mail");
-        return "redirect:/login";
+
     }
 
     @RequestMapping(value = "/confirm-reset", method = {RequestMethod.GET, RequestMethod.POST})
@@ -139,7 +140,7 @@ public class MainController {
         } else {
             modelAndView.addObject("link_error","Niepoprawny link");
             modelAndView.setViewName("fragments/forms/login");
-            throw new ObjectNotFoundException("Token error");
+            throw new ExceptionsFacade().throwObjectNotFoundException("Token error");
         }
         return modelAndView;
     }

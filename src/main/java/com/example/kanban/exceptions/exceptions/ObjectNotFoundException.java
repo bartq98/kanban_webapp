@@ -1,4 +1,4 @@
-package com.example.kanban.exceptions;
+package com.example.kanban.exceptions.exceptions;
 
 public class ObjectNotFoundException extends Exception{
     public ObjectNotFoundException(String errorMessage){
