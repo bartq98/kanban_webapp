@@ -1,71 +1,79 @@
-//package com.example.kanban;
-//
-//import com.example.kanban.entities.boards.Board;
-//import com.example.kanban.entities.membership.MembershipKey;
-//import com.example.kanban.entities.user.User;
-//import org.aspectj.lang.annotation.After;
-//import org.aspectj.lang.annotation.Before;
-//import org.junit.jupiter.api.BeforeAll;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mockito;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//
-//class MembershipKeyTest{
-//
-//    private MembershipKey membershipKey1;
-//    private MembershipKey membershipKey2;
-//
-//    private Board board;
-//    private User user;
-//
-//    @BeforeEach
-//    public void setUp() {
-//        User user1 = Mockito.mock(User.class);
-//        Board board1 = Mockito.mock(Board.class);
-//        Mockito.when(user1.getId()).thenReturn(2);
-//        Mockito.when(board1.getId()).thenReturn(2);
-//        this.membershipKey1 = new MembershipKey(user1, board1);
-//
-//        User user2 = Mockito.mock(User.class);
-//        Board board2 = Mockito.mock(Board.class);
-//        Mockito.when(user2.getId()).thenReturn(2);
-//        Mockito.when(board2.getId()).thenReturn(2);
-//        this.membershipKey2 = new MembershipKey(user2, board2);
-//    }
-//
-//    @Test
-//    void testEquals() {
-//        assertTrue(this.membershipKey1.equals(this.membershipKey2));
-//        assertTrue(this.membershipKey1.equals(this.membershipKey1));
-//        assertFalse(this.membershipKey1.equals(null));
-//
-//
-//        User user2 = Mockito.mock(User.class);
-//        Board board2 = Mockito.mock(Board.class);
-//        Mockito.when(user2.getId()).thenReturn(3);
-//        Mockito.when(board2.getId()).thenReturn(3);
-//        this.membershipKey2.setUser(user2);
-//        this.membershipKey2.setBoard(board2);
-//        assertFalse(this.membershipKey1.equals(this.membershipKey2));
-//    }
-//
-//    @Test
-//    void testHashCode(){
-//
-//        this.user = new User();
-//        this.user.setId(2);
-//        this.board = new Board();
-//        this.board.setId(2);
-//
-//        this.membershipKey1.setUser(this.user);
-//        this.membershipKey1.setBoard(this.board);
-//        this.membershipKey2.setUser(this.user);
-//        this.membershipKey2.setBoard(this.board);
-//        assertNotSame(this.membershipKey1, this.membershipKey2);
-//        assertEquals(this.user.hashCode(), this.board.hashCode());
-//        assertEquals(this.membershipKey1.hashCode(), this.membershipKey2.hashCode());
-//    }
-//}
+package com.example.kanban;
+
+import com.example.kanban.entities.boards.Board;
+import com.example.kanban.entities.membership.MembershipKey;
+import com.example.kanban.entities.user.User;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
+class MembershipKeyTest{
+
+    private Board board;
+    private User user;
+
+    private Board mockBoardFirst;
+    private User mockUserFirst;
+
+    private Board mockBoardSecond;
+    private User mockUserSecond;
+
+    private MembershipKey membershipKeyFirst;
+    private MembershipKey membershipKeySecond;
+
+    @BeforeEach
+    public void setUp() {
+        this.mockUserFirst = Mockito.mock(User.class);
+        this.mockBoardFirst = Mockito.mock(Board.class);
+
+        Mockito.when(this.mockUserFirst.getId()).thenReturn(2);
+        Mockito.when(this.mockBoardFirst.getId()).thenReturn(2);
+
+        this.membershipKeyFirst = new MembershipKey(this.mockUserFirst.getId(), this.mockBoardFirst.getId());
+
+
+        this.mockUserSecond = Mockito.mock(User.class);
+        this.mockBoardSecond = Mockito.mock(Board.class);
+
+        Mockito.when(mockUserSecond.getId()).thenReturn(2);
+        Mockito.when(mockBoardSecond.getId()).thenReturn(2);
+
+        this.membershipKeySecond = new MembershipKey(mockUserSecond.getId(), mockBoardSecond.getId());
+    }
+
+    @Test
+    void testEquals() {
+        assertTrue(this.membershipKeyFirst.equals(this.membershipKeySecond));
+        assertTrue(this.membershipKeyFirst.equals(this.membershipKeyFirst));
+        assertFalse(this.membershipKeyFirst.equals(null));
+
+        Mockito.when(mockUserSecond.getId()).thenReturn(3);
+        Mockito.when(mockBoardSecond.getId()).thenReturn(3);
+        this.membershipKeySecond.setUser(mockUserSecond.getId());
+        this.membershipKeySecond.setBoard(mockBoardSecond.getId());
+
+        assertFalse(this.membershipKeyFirst.equals(this.membershipKeySecond));
+    }
+
+    @Test
+    void testHashCode(){
+        this.user = new User();
+        this.user.setId(2);
+        this.board = new Board();
+        this.board.setId(2);
+
+        this.membershipKeyFirst.setUser(this.user.getId());
+        this.membershipKeyFirst.setBoard(this.board.getId());
+        this.membershipKeySecond.setUser(this.user.getId());
+        this.membershipKeySecond.setBoard(this.board.getId());
+        assertNotSame(this.membershipKeyFirst, this.membershipKeySecond);
+        assertEquals(this.user.hashCode(), this.board.hashCode());
+        assertEquals(this.membershipKeyFirst.hashCode(), this.membershipKeySecond.hashCode());
+    }
+}
