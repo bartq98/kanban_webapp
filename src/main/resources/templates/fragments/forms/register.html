@@ -1,0 +1,26 @@
+<div layout:fragment="form" layout:decorate="~{layouts/entry}">
+
+    <h1>Rejestracja</h1>
+    <div th:if="${register_fail}">
+        <p th:text="${register_fail}"></p>
+    </div>
+    <form action="#" th:action="@{/register}" th:object="${user}" method="post">
+        <p>Nazwa użytkownika: <input type="text" th:field="*{userName}" /></p>
+        <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}">Name Error</p>
+
+        <p>Imię: <input type="text" th:field="*{name}" /></p>
+        <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}">Name Error</p>
+
+        <p>Nazwisko: <input type="text" th:field="*{surname}" /></p>
+        <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</p>
+
+        <p>Email: <input type="text" th:field="*{email}" /></p>
+        <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Name Error</p>
+
+        <p>Hasło: <input type="password" th:field="*{password}" /></p>
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Name Error</p>
+
+        <p>Powtórz hasło: <input type="password"/></p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+</div>

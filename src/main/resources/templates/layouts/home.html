@@ -1,0 +1,16 @@
+<div layout:fragment="content" layout:decorate="~{base}">
+    <div class="card-panel teal lighten-2">This is a card panel with a teal lighten-2 class</div>
+    <p>Click <a th:href="@{/hello}">here</a> to see a greeting.</p>
+    <p>Click <a th:href="@{/info}">here</a> to see your profile.</p>
+    <div sec:authorize="isAuthenticated()" th:insert="fragments/forms/logout :: form">
+
+    </div>
+    <div sec:authorize="isAnonymous()" th:insert="fragments/actions/user :: form">
+
+    </div>
+
+    <div th:if="${create_board_success}">
+        <p th:text="${create_board_success}"></p>
+    </div>
+
+</div>

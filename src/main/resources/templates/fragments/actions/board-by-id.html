@@ -1,0 +1,176 @@
+<div layout:fragment="boards-data" layout:decorate="~{layouts/board}">
+    <table>
+        <tr>
+            <td th:text="${board.id}"></td>
+            <td th:text="${board.created_at}"></td>
+            <td th:text="${board.name}"></td>
+            <td th:text="${board.slug}"></td>
+        </tr>
+    </table>
+    <div id='kanban'>
+    </div>
+
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div th:if="${permission}">
+        <p>Dodaj lub edytuj użytkownika</p>
+        <form action="#" th:action="@{${redirect_add}}" method="post">
+            <p>Podaj E-mail:</p>
+            <input type="email" th:value="${email}" name="user_email" />
+            <select name="user_type" style="display :block">
+                <option th:each="type : ${T(com.example.kanban.entities.membership.MemberType).values()}"
+                        th:value="${type}" th:text="${type}"></option>
+            </select>
+            <input type="submit">
+        </form>
+        <p>Usuń użytkownika</p>
+        <form action="#" th:action="@{${redirect_delete}}" method="post">
+            <p>Podaj E-mail:</p>
+            <input type="email" th:value="${email_to_delete}" name="user_email_to_delete" />
+            <input type="submit">
+        </form>
+    </div>
+
+
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+
+
+        $(document).ready(function () {
+            var BID = /*[[${board.id}]]*/ '1';
+            var tasksData, sectionData,memberData;
+
+            $.when(
+                $.getJSON("/board/" + BID +"/tasks", function (data) {
+                    tasksData = data;
+                }),
+                $.getJSON("/board/" + BID + "/sections_from_board", function (data) {
+                    sectionData = data;
+                    console.debug(sectionData);
+                    sectionData = sectionData.map((s) => {
+                        return {
+                            dataField: s.id,
+                            text: s.title
+                        }
+                    });
+                    console.debug(sectionData);
+
+                }),
+                $.getJSON("/board/" + BID + "/user_type",function(data){
+                    memberData=data;
+                })
+            ).then(function () {
+                let fields = [
+                    { name: "id", type: "string" },
+                    { name: "status", map: "column_id", type: "int" },
+                    { name: "text", map: "title", type: "string" },
+                    { name: "content", map: "description", type: "string" }
+                ];
+                let source =
+                    {
+                        localData: tasksData,
+                        datatype: 'array',
+                        dataFields: fields
+                    };
+                let dataAdapter = new $.jqx.dataAdapter(source);
+
+                sectionData.forEach(function (section) {
+                    section.iconClassName = "jqx-icon-plus-alt"
+                });
+                console.debug(sectionData);
+
+
+                $('#kanban').jqxKanban({
+                    source: dataAdapter,
+                    columns: sectionData,
+                    resources: dataAdapter,
+                    template: "<div class='jqx-kanban-item' id=''>"
+                        + "<div class='jqx-kanban-item-text'></div>"
+                        + "<div class='jqx-kanban-item-content'></div>"
+                        + "</div>"
+                });
+
+                var itemIndex = 0;
+                $('#kanban').on('columnAttrClicked', function (event) {
+                    var args = event.args;
+                    if (args.attribute == "button") {
+                        args.cancelToggle = true;
+                        if (!args.column.collapsed) {
+                            let newTask = {
+                                status: args.column.dataField,
+                                text: "<input placeholder='Title' id='newTitle" + itemIndex + "'/>",
+                                content: "<input placeholder='Content' id='newContent" + itemIndex + "'/><button id='newItem" + itemIndex + "'>Add task</button>"
+                            };
+                            $('#kanban').jqxKanban('addItem', newTask);
+                            let input =  $("#newItem" + itemIndex);
+                            let input2 =  $("#newTitle" + itemIndex);
+                            let input3 =  $("#newContent" + itemIndex);
+                            input.mousedown(function (event) {
+                                let completeTask = "<div class=\"jqx-kanban-item-text\">" + input2.val() + "</div><div class=\"jqx-kanban-item-content\">" + input3.val() + "</div>";
+                                $(completeTask).insertBefore($(event.target));
+                                $(event.target).remove();
+                                input2.remove();
+                                input3.remove();
+                                let jsonData = {
+                                    "title": input2.val(),
+                                    "description": input3.val(),
+                                    "column": args.column.dataField
+                                };
+                                console.debug(jsonData);
+                                $.ajax({
+                                    url: BID + '/add_task',
+                                    data: JSON.stringify(jsonData),
+                                    type: "POST",
+                                    contentType: "application/json; charset=utf-8",
+                                    // success: function(){ todo: It can be done later
+                                    //     alert("You've moved task from " + jsonData.oldColumn + " to " + jsonData.newColumn);
+                                    // }
+                                });
+                            });
+
+                            itemIndex++;
+                        }
+                    }
+                });
+
+                $('#kanban').on('itemMoved', function (event) {
+                    let args = event.args;
+                    let itemId = args.itemId;
+                    let oldParentId = args.oldParentId;
+                    let newParentId = args.newParentId;
+                    let itemData = args.itemData;
+                    let oldColumn = args.oldColumn;
+                    let newColumn = args.newColumn;
+                    console.debug(event.args.newColumn.dataField);
+                    console.debug(event.args.oldColumn.dataField);
+                    console.debug(event.args.itemId);
+                    let jsonData = {
+                        "taskId": parseInt(event.args.itemId),
+                        "oldColumn": event.args.oldColumn.dataField,
+                        "newColumn": event.args.newColumn.dataField
+                    };
+                    $.ajax({
+                        url: BID + '/move_task',
+                        data: JSON.stringify(jsonData),
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        // success: function(){ todo: It can be done later
+                        //     alert("You've moved task from " + jsonData.oldColumn + " to " + jsonData.newColumn);
+                        // }
+                    });
+                });
+                if(memberData.member_type=='EXECUTOR'){
+                 $('#kanban').find('*').each(function() {
+                    $(this).unbind();
+                 });
+                 }
+            });
+        });
+
+        /*]]>*/
+    </script>
+
+
+</div>

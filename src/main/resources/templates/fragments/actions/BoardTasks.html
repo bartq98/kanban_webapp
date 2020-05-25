@@ -1,0 +1,13 @@
+<div layout:fragment="boards-tasks-data" layout:decorate="~{layouts/BoardTasks}">
+
+    <table th:each="task:${tasks}" th:if="${tasks}">
+        <tr>
+            <th>Nazwa:</th>
+            <td th:text="${task.title}"></td>
+        </tr>
+    </table>
+    <div th:unless="${tasks}">
+        <p th:if="${MembershipError}" th:text="${MembershipError}"></p>
+        <p th:unless="${MembershipError}">You have 0 tasks</p>
+    </div>
+</div>

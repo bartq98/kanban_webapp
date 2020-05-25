@@ -1,0 +1,8 @@
+<div layout:fragment="form" layout:decorate="~{layouts/entry}">
+    <form th:action="@{/login}" method="post">
+        <div><label> Email : <input type="email" name="email"/> </label></div>
+        <div><label> Password: <input type="password" name="password"/> </label></div>
+        <div><input type="submit" value="Sign In"/></div>
+    </form>
+    <a href="/forgot-password">Forgot Password?</a>
+</div>
